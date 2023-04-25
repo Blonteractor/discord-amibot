@@ -1,7 +1,10 @@
 include!(concat!(env!("OUT_DIR"), "/_includes.rs"));
 
-use go_amizone::server::proto::v1 as amizone;
+use go_amizone::server::proto::v1::amizone_service_client::AmizoneServiceClient;
 
-fn main() {
-    println!("Hello, world!");
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let mut amizone = AmizoneServiceClient::connect("http://0.0.0.0:8081").await?;
+
+    Ok(())
 }
