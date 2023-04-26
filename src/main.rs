@@ -9,7 +9,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut client = user.get_client(connection)?;
 
     let sems = client
-        .get_class_schedule(api::Date {
+        .get_class_schedule(api::types::Date {
             year: 2023,
             day: 19,
             month: 4,
