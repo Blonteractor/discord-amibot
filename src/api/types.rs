@@ -4,7 +4,7 @@ use go_amizone::server::proto::v1::{
 };
 
 use std::sync::Arc;
-use std::sync::Mutex;
+use tokio::sync::Mutex;
 use tonic::transport::channel::Channel;
 
 pub type Date = google::r#type::Date;
@@ -16,3 +16,6 @@ pub type Semester = goamizone::Semester;
 pub type Course = goamizone::Course;
 pub type WifiMacInfo = goamizone::WifiMacInfo;
 pub type AmizoneConnection = Arc<Mutex<AmizoneServiceClient<Channel>>>;
+
+pub type Result<T> = std::result::Result<T, tonic::Status>;
+pub type DbOperationResult<T> = std::result::Result<T, mongodb::error::Error>;
