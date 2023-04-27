@@ -6,3 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+amizone = { path = "../amizone"}
+poise = "0.5.4"
+tokio = { version = "1.0", features = ["rt-multi-thread", "macros"] }
+dotenv = "0.15.0"
