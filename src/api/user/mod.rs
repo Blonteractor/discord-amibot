@@ -8,7 +8,7 @@ use serde::ser::{Serialize, SerializeStruct};
 
 #[derive(Clone)]
 pub struct User {
-    id: u32,
+    id: String,
     pub credentials: Credentials,
 }
 
@@ -21,7 +21,14 @@ impl Serialize for User {
         state.serialize_field("id", &self.id)?;
         state.serialize_field(
             "metadata",
-            &self.credentials.get_metadata().to_str().unwrap_or_default(),
+            &self
+                .credentials
+                .get_metadata()
+                .to_str()
+                .unwrap_or_default()
+                .split_ascii_whitespace()
+                .nth(1)
+                .unwrap(),
         )?;
 
         state.end()
@@ -55,7 +62,7 @@ impl<'de> serde::Deserialize<'de> for User {
 
                 Ok(User {
                     id,
-                    credentials: Credentials::decode_login_from_metadata(metadata).unwrap(),
+                    credentials: Credentials::from_metadata(metadata).unwrap(),
                 })
             }
 
@@ -92,7 +99,7 @@ impl<'de> serde::Deserialize<'de> for User {
 
                 let user = User {
                     id,
-                    credentials: Credentials::decode_login_from_metadata(metadata).unwrap(),
+                    credentials: Credentials::from_metadata(metadata).unwrap(),
                 };
 
                 Ok(user)
@@ -105,18 +112,18 @@ impl<'de> serde::Deserialize<'de> for User {
 
 impl User {
     pub async fn new<S: ToString>(
-        id: u32,
+        id: S,
         username: S,
         password: S,
         mongo_client: &Client,
     ) -> DbOperationResult<Self> {
-        if let Some(user) = Self::from_id(id, mongo_client).await? {
+        if let Some(user) = Self::from_id(id.to_string(), mongo_client).await? {
             Ok(user)
         } else {
             let db = mongo_client.database("users");
             let creds = db.collection::<User>("credentials");
             let object = Self {
-                id,
+                id: id.to_string(),
                 credentials: Credentials::new(username, password),
             };
             creds.insert_one(object.clone(), None).await?;
@@ -124,15 +131,20 @@ impl User {
         }
     }
 
-    pub async fn forget(id: u32, mongo_client: &Client) -> DbOperationResult<Option<User>> {
+    pub async fn forget(
+        id: impl ToString,
+        mongo_client: &Client,
+    ) -> DbOperationResult<Option<User>> {
         let db = mongo_client.database("users");
         let creds = db.collection::<User>("credentials");
 
-        creds.find_one_and_delete(doc! { "id": id }, None).await
+        creds
+            .find_one_and_delete(doc! { "id": id.to_string() }, None)
+            .await
     }
 
     pub async fn update<S: ToString>(
-        id: u32,
+        id: S,
         username: S,
         password: S,
         mongo_client: &Client,
@@ -142,18 +154,21 @@ impl User {
 
         creds
             .find_one_and_update(
-                doc! { "id": id },
+                doc! { "id": id.to_string() },
                 doc! { "$set": { "credentials": Credentials::new(username, password) } },
                 None,
             )
             .await
     }
 
-    pub async fn from_id(id: u32, mongo_client: &Client) -> DbOperationResult<Option<Self>> {
+    pub async fn from_id<S: ToString>(
+        id: S,
+        mongo_client: &Client,
+    ) -> DbOperationResult<Option<Self>> {
         let db = mongo_client.database("users");
         let creds = db.collection::<User>("credentials");
 
-        let mut cursor = creds.find(doc! { "id": id }, None).await?;
+        let mut cursor = creds.find(doc! { "id": id.to_string() }, None).await?;
 
         if let Some(user) = cursor.try_next().await? {
             Ok(Some(user))
@@ -166,8 +181,8 @@ impl User {
         Ok(UserClient::new(self.credentials.get_metadata(), connection))
     }
 
-    pub fn id(&self) -> u32 {
-        self.id
+    pub fn id(&self) -> &str {
+        &self.id
     }
 }
 
@@ -175,26 +190,29 @@ impl User {
 mod tests {
     use super::*;
 
+    static PASS: &'static str = "$196*(^%@1DSjDSx@";
+    static USERNAME: &'static str = "sampleuser";
+    static ID: &'static str = "619800189372465153";
+
     #[test]
     fn deserialize() {
         let example = r#"{
             "id": 1010,
-            "username": "blonteractor",
-            "metadata": "Basic YmxvbnRlcmFjdG9yOnZlcnluaWNlcGFzcw=="
+            "metadata": "c2FtcGxldXNlcjokMTk2KiheJUAxRFNqRFN4QA=="
           }"#;
 
         let desirialized = serde_json::from_str::<User>(example).unwrap();
 
-        assert_eq!(desirialized.id, 1010);
-        assert_eq!(desirialized.credentials.username(), "blonteractor");
-        assert_eq!(desirialized.credentials.password(), "verynicepass");
+        assert_eq!(desirialized.id, ID);
+        assert_eq!(desirialized.credentials.username(), USERNAME);
+        assert_eq!(desirialized.credentials.password(), PASS);
     }
 
     #[test]
     fn serialize() {
         let example = User {
-            id: 1010,
-            credentials: Credentials::new("blonteractor", "verynicepass"),
+            id: ID.to_string(),
+            credentials: Credentials::new(USERNAME, PASS),
         };
 
         println!("{}", serde_json::to_string_pretty(&example).unwrap());

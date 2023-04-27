@@ -28,11 +28,11 @@ impl Credentials {
         .unwrap()
     }
 
-    pub fn decode_login_from_metadata(metadata: String) -> Result<Self, DecodeError> {
-        let part_to_be_decoded = metadata.split_ascii_whitespace().nth(1).unwrap();
-        let decoded = URL_SAFE.decode(part_to_be_decoded)?;
+    pub fn from_metadata(metadata: String) -> Result<Self, DecodeError> {
+        let decoded = URL_SAFE.decode(metadata)?;
 
         // 58 is the ASCII code for ':'
+        // metadata is in the form username:password
         let mut split_at_colon = decoded.split(|ascii| ascii == &58u8);
 
         Ok(Self::new(

@@ -9,7 +9,7 @@ mod test {
     async fn database() {
         dotenv().ok();
 
-        const ID: u32 = 1010;
+        const ID: &'static str = "1010";
         let client = new_db_connection(std::env::var("DATABASE_URL").unwrap().to_string())
             .await
             .unwrap();
