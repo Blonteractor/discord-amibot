@@ -1,3 +1,4 @@
-[submodule "proto/googleapis"]
-	path = proto/googleapis
+
+[submodule "amizone/proto/googleapis"]
+	path = amizone/proto/googleapis
 	url = https://github.com/googleapis/googleapis
