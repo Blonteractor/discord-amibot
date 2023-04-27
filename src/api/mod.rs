@@ -1,7 +1,7 @@
 pub mod types;
 use futures::stream::TryStreamExt;
 use mongodb::{
-    bson::doc,
+    bson::{doc, Bson},
     options::{ClientOptions, ServerApi, ServerApiVersion},
     Client,
 };
@@ -43,20 +43,33 @@ pub async fn new_db_connection(addr: impl ToString) -> DbOperationResult<Client>
 
 #[derive(Deserialize, Serialize, Clone)]
 pub struct Credentials {
-    username: String,
+    pub username: String,
     password: String,
+}
+
+impl Credentials {
+    pub fn new<S: ToString>(username: S, password: S) -> Self {
+        Self {
+            username: username.to_string(),
+            password: password.to_string(),
+        }
+    }
+}
+
+impl From<Credentials> for Bson {
+    fn from(credentials: Credentials) -> Self {
+        let doc = doc! {
+            "username": credentials.username,
+            "password": credentials.password,
+        };
+        Bson::Document(doc)
+    }
 }
 
 #[derive(Deserialize, Serialize, Clone)]
 pub struct User {
     pub id: u32,
-    credentials: Credentials,
-}
-
-pub struct UserClient {
-    key: AsciiMetadataKey,
-    value: AsciiMetadataValue,
-    connection: AmizoneConnection,
+    pub credentials: Credentials,
 }
 
 impl User {
@@ -73,14 +86,36 @@ impl User {
             let creds = db.collection::<User>("credentials");
             let object = Self {
                 id,
-                credentials: Credentials {
-                    username: username.to_string(),
-                    password: password.to_string(),
-                },
+                credentials: Credentials::new(username, password),
             };
             creds.insert_one(object.clone(), None).await?;
             Ok(object)
         }
+    }
+
+    pub async fn forget(id: u32, mongo_client: &Client) -> DbOperationResult<Option<User>> {
+        let db = mongo_client.database("users");
+        let creds = db.collection::<User>("credentials");
+
+        creds.find_one_and_delete(doc! { "id": id }, None).await
+    }
+
+    pub async fn update<S: ToString>(
+        id: u32,
+        username: S,
+        password: S,
+        mongo_client: &Client,
+    ) -> DbOperationResult<Option<User>> {
+        let db = mongo_client.database("users");
+        let creds = db.collection::<User>("credentials");
+
+        creds
+            .find_one_and_update(
+                doc! { "id": id },
+                doc! { "$set": { "credentials": Credentials::new(username, password) } },
+                None,
+            )
+            .await
     }
 
     pub async fn from_id(id: u32, mongo_client: &Client) -> DbOperationResult<Option<Self>> {
@@ -119,6 +154,12 @@ impl User {
             connection,
         })
     }
+}
+
+pub struct UserClient {
+    key: AsciiMetadataKey,
+    value: AsciiMetadataValue,
+    connection: AmizoneConnection,
 }
 
 impl UserClient {
