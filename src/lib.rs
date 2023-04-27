@@ -2,7 +2,7 @@ pub mod api;
 
 #[cfg(test)]
 mod test {
-    use super::api::{new_db_connection, User};
+    use super::api::{new_db_connection, user::User};
     use dotenv::dotenv;
 
     #[tokio::test]
@@ -20,7 +20,7 @@ mod test {
 
         let new_user = User::from_id(ID, &client).await.unwrap().unwrap();
 
-        assert_eq!(new_user.id, ID);
+        assert_eq!(new_user.id(), ID);
 
         User::update(ID, "samepluserupdated", "samplepassupdated", &client)
             .await
@@ -28,10 +28,10 @@ mod test {
 
         let updated_user = User::from_id(ID, &client).await.unwrap().unwrap();
 
-        assert_eq!(updated_user.credentials.username, "samepluserupdated");
+        assert_eq!(updated_user.credentials.username(), "samepluserupdated");
 
         let deleted_user = User::forget(ID, &client).await.unwrap().unwrap();
 
-        assert_eq!(deleted_user.id, ID);
+        assert_eq!(deleted_user.id(), ID);
     }
 }
