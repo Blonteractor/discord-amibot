@@ -197,7 +197,7 @@ mod tests {
     #[test]
     fn deserialize() {
         let example = r#"{
-            "id": 1010,
+            "id": "619800189372465153",
             "metadata": "c2FtcGxldXNlcjokMTk2KiheJUAxRFNqRFN4QA=="
           }"#;
 
