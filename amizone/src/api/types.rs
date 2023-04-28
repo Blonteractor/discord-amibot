@@ -13,6 +13,7 @@ pub type Course = goamizone::Course;
 pub type WifiMacInfo = goamizone::WifiMacInfo;
 pub type AmizoneConnection =
     std::sync::Arc<tokio::sync::Mutex<AmizoneServiceClient<tonic::transport::channel::Channel>>>;
+pub type DatabaseConnection = mongodb::Client;
 
 pub type Result<T> = std::result::Result<T, tonic::Status>;
 pub type DbOperationResult<T> = std::result::Result<T, mongodb::error::Error>;

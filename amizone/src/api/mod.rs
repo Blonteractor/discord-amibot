@@ -22,7 +22,7 @@ pub async fn new_amizone_connection(addr: impl ToString) -> Result<AmizoneConnec
     }
 }
 
-pub async fn new_db_connection(addr: impl ToString) -> DbOperationResult<Client> {
+pub async fn new_db_connection(addr: impl ToString) -> DbOperationResult<DatabaseConnection> {
     let mut client_options = ClientOptions::parse(addr.to_string()).await?;
 
     let server_api = ServerApi::builder().version(ServerApiVersion::V1).build();

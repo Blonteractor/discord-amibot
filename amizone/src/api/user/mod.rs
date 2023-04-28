@@ -3,7 +3,7 @@ use super::client::UserClient;
 use super::types::*;
 use credentials::Credentials;
 use futures::stream::TryStreamExt;
-use mongodb::{bson::doc, Client};
+use mongodb::bson::doc;
 use serde::ser::{Serialize, SerializeStruct};
 
 #[derive(Clone)]
@@ -115,7 +115,7 @@ impl User {
         id: S,
         username: S,
         password: S,
-        mongo_client: &Client,
+        mongo_client: &DatabaseConnection,
     ) -> DbOperationResult<Self> {
         if let Some(user) = Self::from_id(id.to_string(), mongo_client).await? {
             Ok(user)
@@ -133,7 +133,7 @@ impl User {
 
     pub async fn forget(
         id: impl ToString,
-        mongo_client: &Client,
+        mongo_client: &DatabaseConnection,
     ) -> DbOperationResult<Option<User>> {
         let db = mongo_client.database("users");
         let creds = db.collection::<User>("credentials");
@@ -147,7 +147,7 @@ impl User {
         id: S,
         username: S,
         password: S,
-        mongo_client: &Client,
+        mongo_client: &DatabaseConnection,
     ) -> DbOperationResult<Option<User>> {
         let db = mongo_client.database("users");
         let creds = db.collection::<User>("credentials");
@@ -163,7 +163,7 @@ impl User {
 
     pub async fn from_id<S: ToString>(
         id: S,
-        mongo_client: &Client,
+        mongo_client: &DatabaseConnection,
     ) -> DbOperationResult<Option<Self>> {
         let db = mongo_client.database("users");
         let creds = db.collection::<User>("credentials");
