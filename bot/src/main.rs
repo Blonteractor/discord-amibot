@@ -1,3 +1,5 @@
+pub mod commands;
+
 use std::env;
 use std::str::FromStr;
 use std::time;
@@ -10,15 +12,15 @@ use dotenv::dotenv;
 use poise::serenity_prelude::{self as serenity, UserId};
 
 #[allow(dead_code)]
-struct Data {
-    start_time: time::Instant,
-    connections: Connections,
-    dev_user_id: serenity::UserId,
-    bot_user_id: serenity::UserId,
+pub struct Data {
+    pub start_time: time::Instant,
+    pub connections: Connections,
+    pub dev_user_id: serenity::UserId,
+    pub bot_user_id: serenity::UserId,
 }
 
 #[allow(dead_code)]
-struct Connections {
+pub struct Connections {
     pub amizone: AmizoneConnection,
     pub db: DatabaseConnection,
 }
@@ -36,8 +38,8 @@ impl Connections {
     }
 }
 
-type Error = Box<dyn std::error::Error + Send + Sync>;
-type Context<'a> = poise::Context<'a, Data, Error>;
+pub type Error = Box<dyn std::error::Error + Send + Sync>;
+pub type Context<'a> = poise::Context<'a, Data, Error>;
 
 #[poise::command(prefix_command)]
 async fn register(ctx: Context<'_>) -> Result<(), Error> {
@@ -56,7 +58,7 @@ async fn main() {
                 case_insensitive_commands: true,
                 ..Default::default()
             },
-            commands: vec![register()],
+            commands: vec![register(), commands::login::login()],
             ..Default::default()
         })
         .token(env::var("DISCORD_TOKEN").expect("missing DISCORD_TOKEN"))
