@@ -6,6 +6,9 @@ use futures::stream::TryStreamExt;
 use mongodb::bson::doc;
 use serde::ser::{Serialize, SerializeStruct};
 
+static DATABSE_NAME: &'static str = "amibot_users";
+static COLLECTION_NAME: &'static str = "login_credentials";
+
 #[derive(Clone)]
 pub struct User {
     id: String,
@@ -120,8 +123,8 @@ impl User {
         if let Some(user) = Self::from_id(id.to_string(), mongo_client).await? {
             Ok(user)
         } else {
-            let db = mongo_client.database("users");
-            let creds = db.collection::<User>("credentials");
+            let db = mongo_client.database(DATABSE_NAME);
+            let creds = db.collection::<User>(COLLECTION_NAME);
             let object = Self {
                 id: id.to_string(),
                 credentials: Credentials::new(username, password),
@@ -135,8 +138,8 @@ impl User {
         id: impl ToString,
         mongo_client: &DatabaseConnection,
     ) -> DbOperationResult<Option<User>> {
-        let db = mongo_client.database("users");
-        let creds = db.collection::<User>("credentials");
+        let db = mongo_client.database(DATABSE_NAME);
+        let creds = db.collection::<User>(COLLECTION_NAME);
 
         creds
             .find_one_and_delete(doc! { "id": id.to_string() }, None)
@@ -149,8 +152,8 @@ impl User {
         password: S,
         mongo_client: &DatabaseConnection,
     ) -> DbOperationResult<Option<User>> {
-        let db = mongo_client.database("users");
-        let creds = db.collection::<User>("credentials");
+        let db = mongo_client.database(DATABSE_NAME);
+        let creds = db.collection::<User>(COLLECTION_NAME);
 
         creds
             .find_one_and_update(
@@ -165,8 +168,8 @@ impl User {
         id: S,
         mongo_client: &DatabaseConnection,
     ) -> DbOperationResult<Option<Self>> {
-        let db = mongo_client.database("users");
-        let creds = db.collection::<User>("credentials");
+        let db = mongo_client.database(DATABSE_NAME);
+        let creds = db.collection::<User>(COLLECTION_NAME);
 
         let mut cursor = creds.find(doc! { "id": id.to_string() }, None).await?;
 
