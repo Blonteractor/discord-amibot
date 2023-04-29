@@ -1,6 +1,7 @@
-# Discord Student Portal Bot
+# Amibot
 
 This is a Discord bot that allows users to access their student portal directly in Discord. The bot is written in Rust and uses [go-amizone](https://github.com/ditsuke/go-amizone) as its backend.
+This project uses [poise.rs](https://github.com/serenity-rs/poise) as its Discord bot framework.
 
 ## Getting Started
 
@@ -8,15 +9,27 @@ This is a Discord bot that allows users to access their student portal directly 
 2. Install Rust and its package manager, Cargo, if you haven't already.
 3. Install the required dependencies by running `cargo build`.
 4. Create a Discord bot and obtain its token.
-5. Set the `DISCORD_TOKEN` environment variable to your bot's token.
+5. Create a `.env` file in the root directory of the project and set the following environment variables:
+    - `DISCORD_TOKEN`
+    - `DATABASE_URL`
+    - `AMIZONE_API_URL`
+    - `DEV_ID`
+    - `DEV_SERVER_ID` (optional if you compile with the --release flag)
 6. Run the bot by running `cargo run`.
 
 ## Commands
 
-The bot currently has no commands as I started working on it yesterday but here's some random shit chatgpt wrote which will eventually be true:
+**Note: Bot is in active developement, most commands below dont exist yet**
 
--   `!attendance`: Displays the user's attendance for the current semester.
--   `!marks`: Displays the user's marks for the current semester.
+-   `/attendance`: Displays the user's attendance for the current semester.
+-   `/schedule <YYYY-MM-DD>`: Displays the user's schedule for the given date.
+-   `/exams`: Displays the user's exam schedule for the current semester.
+-   `/semesters`: Displays a list of past and current semesters.
+-   `/courses <semester_ref>`: Displays a list of courses for the given semester.
+-   `/profile`: Displays the user's profile information.
+-   `/wifi`: Displays the user's registered WiFi MAC addresses.
+-   `/wifi <ACTION> <MAC>`: Registers/Derigsters a WiFi MAC address for the user.
+-   `/feedback <rating> <query_rating> <comment>`: Fills the faculty feedback.
 
 ## Contributing
 
