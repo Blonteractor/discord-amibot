@@ -2,6 +2,21 @@ use amizone::api::user::User;
 
 use crate::{Context, Error};
 
+static LOGIN_HELP: &'static str = "/login - Log into Amizone with your credentials.
+
+Usage: /login [username] [password]
+
+Arguments:
+- [username]: Your Amizone username.
+- [password]: Your Amizone password.
+
+Example:
+/login johnsmith password123
+
+Note: Your credentials are securely stored using encryption.";
+
+/// Log into Amizone with your credentials
+/// Note: Your credentials are securely stored using encryption"
 #[poise::command(slash_command, help_text_fn = "login_help", check = "login_check")]
 pub async fn login(
     ctx: Context<'_>,
@@ -29,19 +44,7 @@ pub async fn login(
 }
 
 fn login_help() -> String {
-    "/login - Log into Amizone with your credentials.
-
-Usage: /login [username] [password]
-
-Arguments:
-- [username]: Your Amizone username.
-- [password]: Your Amizone password.
-
-Example:
-/login johnsmith password123
-
-Note: Your credentials are securely stored using encryption."
-        .into()
+    LOGIN_HELP.into()
 }
 
 async fn login_check(ctx: Context<'_>) -> Result<bool, Error> {
