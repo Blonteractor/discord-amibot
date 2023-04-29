@@ -47,12 +47,17 @@ async fn register(ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
+async fn on_error(error: poise::FrameworkError<'_, Data, Error>) {
+    println!("Encountered error: {}", error.to_string());
+}
+
 #[tokio::main]
 async fn main() {
     dotenv().ok();
 
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
+            on_error: |error| Box::pin(on_error(error)),
             prefix_options: poise::PrefixFrameworkOptions {
                 prefix: Some("~".into()),
                 case_insensitive_commands: true,
