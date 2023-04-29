@@ -16,7 +16,6 @@ Example:
 Note: Your credentials are securely stored using encryption.";
 
 /// Log into Amizone with your credentials
-/// Note: Your credentials are securely stored using encryption"
 #[poise::command(slash_command, help_text_fn = "login_help", check = "login_check")]
 pub async fn login(
     ctx: Context<'_>,
