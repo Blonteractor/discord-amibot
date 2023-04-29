@@ -42,12 +42,6 @@ impl Connections {
 pub type Error = Box<dyn std::error::Error + Send + Sync>;
 pub type Context<'a> = poise::Context<'a, Data, Error>;
 
-#[poise::command(prefix_command)]
-async fn register(ctx: Context<'_>) -> Result<(), Error> {
-    poise::builtins::register_application_commands_buttons(ctx).await?;
-    Ok(())
-}
-
 async fn on_error(error: poise::FrameworkError<'_, Data, Error>) {
     println!("Encountered error: {}", error.to_string());
 }
@@ -80,13 +74,33 @@ async fn main() {
                 case_insensitive_commands: true,
                 ..Default::default()
             },
-            commands: vec![register(), help(), commands::login::login()],
+            commands: vec![help(), commands::login::login()],
             ..Default::default()
         })
         .token(env::var("DISCORD_TOKEN").expect("missing DISCORD_TOKEN"))
         .intents(serenity::GatewayIntents::all())
-        .setup(|_, ready, _| {
+        .setup(|ctx, ready, framework| {
             Box::pin(async move {
+                println!("Restering commands...");
+
+                #[cfg(not(debug_assertions))]
+                poise::builtins::register_globally(ctx, framework.options().commands.as_slice())
+                    .await
+                    .unwrap();
+
+                #[cfg(debug_assertions)]
+                poise::builtins::register_in_guild(
+                    ctx,
+                    framework.options().commands.as_slice(),
+                    std::env::var("DEV_SERVER_ID")
+                        .unwrap()
+                        .parse::<u64>()
+                        .unwrap()
+                        .into(),
+                )
+                .await
+                .unwrap();
+
                 let connections = Connections::new().await;
                 let start_time = time::Instant::now();
                 let dev_user_id =
