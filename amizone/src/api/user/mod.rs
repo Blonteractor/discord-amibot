@@ -1,116 +1,20 @@
+use futures::stream::TryStreamExt;
 pub mod credentials;
 use super::client::UserClient;
 use super::types::*;
 use credentials::Credentials;
-use futures::stream::TryStreamExt;
 use mongodb::bson::doc;
-use serde::ser::{Serialize, SerializeStruct};
+use serde::{Deserialize, Serialize};
 
 static DATABSE_NAME: &'static str = "amibot_users";
 static COLLECTION_NAME: &'static str = "login_credentials";
 
-#[derive(Clone)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct User {
     id: String,
+
+    #[serde(flatten)]
     pub credentials: Credentials,
-}
-
-impl Serialize for User {
-    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        let mut state = serializer.serialize_struct("User", 3)?;
-        state.serialize_field("id", &self.id)?;
-        state.serialize_field(
-            "metadata",
-            &self
-                .credentials
-                .get_metadata()
-                .to_str()
-                .unwrap_or_default()
-                .split_ascii_whitespace()
-                .nth(1)
-                .unwrap(),
-        )?;
-
-        state.end()
-    }
-}
-
-impl<'de> serde::Deserialize<'de> for User {
-    fn deserialize<D>(deserializer: D) -> std::result::Result<User, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        struct UserVisitor;
-
-        impl<'de> serde::de::Visitor<'de> for UserVisitor {
-            type Value = User;
-
-            fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
-                formatter.write_str("struct User")
-            }
-
-            fn visit_seq<A>(self, mut seq: A) -> std::result::Result<User, A::Error>
-            where
-                A: serde::de::SeqAccess<'de>,
-            {
-                let id = seq
-                    .next_element()?
-                    .ok_or_else(|| serde::de::Error::invalid_length(0, &self))?;
-                let metadata: String = seq
-                    .next_element()?
-                    .ok_or_else(|| serde::de::Error::invalid_length(1, &self))?;
-
-                Ok(User {
-                    id,
-                    credentials: Credentials::from_metadata(metadata).unwrap(),
-                })
-            }
-
-            fn visit_map<A>(self, mut map: A) -> std::result::Result<User, A::Error>
-            where
-                A: serde::de::MapAccess<'de>,
-            {
-                let mut id = None;
-                let mut metadata = None;
-
-                while let Some(key) = map.next_key()? {
-                    match key {
-                        "id" => {
-                            if id.is_some() {
-                                return Err(serde::de::Error::duplicate_field("id"));
-                            }
-                            id = Some(map.next_value()?);
-                        }
-                        "metadata" => {
-                            if metadata.is_some() {
-                                return Err(serde::de::Error::duplicate_field("metadata"));
-                            }
-                            metadata = Some(map.next_value()?);
-                        }
-                        _ => {
-                            let _ = map.next_value::<serde::de::IgnoredAny>()?;
-                        }
-                    }
-                }
-
-                let id = id.ok_or_else(|| serde::de::Error::missing_field("id"))?;
-                let metadata =
-                    metadata.ok_or_else(|| serde::de::Error::missing_field("metadata"))?;
-
-                let user = User {
-                    id,
-                    credentials: Credentials::from_metadata(metadata).unwrap(),
-                };
-
-                Ok(user)
-            }
-        }
-
-        deserializer.deserialize_struct("User", &["id", "credentials"], UserVisitor)
-    }
 }
 
 impl User {
