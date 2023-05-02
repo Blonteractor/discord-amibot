@@ -150,7 +150,6 @@ impl Credentials {
         let nonce = STANDARD.decode(&metadata[0..NONCE_LENGTH]).unwrap();
         let secret = STANDARD.decode(&metadata[NONCE_LENGTH..]).unwrap();
         let secret = Self::decrypt(&cipher, nonce, secret);
-        println!("{:?}", secret);
 
         // 58 is the ASCII code for ':'
         // metadata is in the form username:password
