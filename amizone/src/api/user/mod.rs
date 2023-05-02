@@ -85,7 +85,7 @@ impl User {
     }
 
     pub fn get_client(&self, connection: AmizoneConnection) -> Result<UserClient> {
-        Ok(UserClient::new(self.credentials.get_metadata(), connection))
+        Ok(UserClient::new(self.credentials.get_auth(), connection))
     }
 
     pub fn id(&self) -> &str {
@@ -96,6 +96,7 @@ impl User {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use dotenv::dotenv;
 
     static PASS: &'static str = "$196*(^%@1DSjDSx@";
     static USERNAME: &'static str = "sampleuser";
@@ -103,9 +104,10 @@ mod tests {
 
     #[test]
     fn deserialize() {
+        dotenv().ok();
         let example = r#"{
             "id": "619800189372465153",
-            "metadata": "c2FtcGxldXNlcjokMTk2KiheJUAxRFNqRFN4QA=="
+            "metadata": "Gc47KbQk36YLrkxmxAZhYbqWWOR4cnSX9xaIRo1nC9R5h7t8OHS6mZyzlPfMh0vHiNw1oM6QG20="
           }"#;
 
         let desirialized = serde_json::from_str::<User>(example).unwrap();
@@ -117,6 +119,7 @@ mod tests {
 
     #[test]
     fn serialize() {
+        dotenv().ok();
         let example = User {
             id: ID.to_string(),
             credentials: Credentials::new(USERNAME, PASS),
