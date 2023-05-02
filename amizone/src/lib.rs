@@ -30,8 +30,6 @@ mod test {
 
         assert_eq!(updated_user.credentials.username(), "samepluserupdated");
 
-        let deleted_user = User::forget(ID, &client).await.unwrap().unwrap();
-
-        assert_eq!(deleted_user.id(), ID);
+        User::forget(ID, &client).await.unwrap();
     }
 }

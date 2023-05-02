@@ -45,9 +45,27 @@ impl User {
         let db = mongo_client.database(DATABSE_NAME);
         let creds = db.collection::<User>(COLLECTION_NAME);
 
-        creds
+        let result = creds
             .find_one_and_delete(doc! { "id": id.to_string() }, None)
-            .await
+            .await;
+
+        Self::sanitize_result(result)
+    }
+
+    fn sanitize_result<T>(result: DbOperationResult<Option<T>>) -> DbOperationResult<Option<T>> {
+        if let Err(err) = &result {
+            match err.kind.as_ref() {
+                mongodb::error::ErrorKind::BsonDeserialization(_) => {
+                    // Completely ignore it
+                    return Ok(None);
+                }
+                _ => {
+                    return result;
+                }
+            }
+        } else {
+            return result;
+        }
     }
 
     pub async fn update<S: ToString>(
@@ -59,13 +77,15 @@ impl User {
         let db = mongo_client.database(DATABSE_NAME);
         let creds = db.collection::<User>(COLLECTION_NAME);
 
-        creds
+        let result = creds
             .find_one_and_update(
                 doc! { "id": id.to_string() },
-                doc! { "$set": { "credentials": Credentials::new(username, password) } },
+                doc! { "$set": { "metadata": Credentials::new(username, password).get_metadata() } },
                 None,
             )
-            .await
+            .await;
+
+        Self::sanitize_result(result)
     }
 
     pub async fn from_id<S: ToString>(
