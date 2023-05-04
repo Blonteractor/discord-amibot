@@ -10,7 +10,10 @@ use amizone::api::{
     types::{AmizoneConnection, DatabaseConnection},
 };
 use dotenv::dotenv;
-use poise::serenity_prelude::{self as serenity, UserId};
+use poise::{
+    serenity_prelude::{self as serenity, Context as SerenityContext, Ready, UserId},
+    Framework,
+};
 
 #[allow(dead_code)]
 pub struct Data {
@@ -20,23 +23,9 @@ pub struct Data {
     pub bot_user_id: serenity::UserId,
 }
 
-#[allow(dead_code)]
 pub struct Connections {
     pub amizone: AmizoneConnection,
     pub db: DatabaseConnection,
-}
-
-impl Connections {
-    async fn new() -> Self {
-        Self {
-            amizone: amizoneapi::new_amizone_connection(env::var("AMIZONE_API_URL").unwrap())
-                .await
-                .unwrap(),
-            db: amizoneapi::new_db_connection(env::var("DATABASE_URL").unwrap())
-                .await
-                .unwrap(),
-        }
-    }
 }
 
 pub type Error = Box<dyn std::error::Error + Send + Sync>;
@@ -62,6 +51,51 @@ You can edit your message to the bot and the bot will edit its response.",
     Ok(())
 }
 
+async fn on_ready(
+    ctx: &SerenityContext,
+    ready: &Ready,
+    framework: &Framework<Data, Error>,
+) -> Result<Data, Error> {
+    println!("Registering commands...");
+
+    #[cfg(not(debug_assertions))]
+    poise::builtins::register_globally(ctx, framework.options().commands.as_slice())
+        .await
+        .unwrap();
+
+    #[cfg(debug_assertions)]
+    poise::builtins::register_in_guild(
+        ctx,
+        framework.options().commands.as_slice(),
+        std::env::var("DEV_SERVER_ID")
+            .unwrap()
+            .parse::<u64>()
+            .unwrap()
+            .into(),
+    )
+    .await
+    .unwrap();
+
+    let connections = Connections {
+        amizone: amizoneapi::new_amizone_connection(env::var("AMIZONE_API_URL").unwrap())
+            .await
+            .unwrap(),
+        db: amizoneapi::new_db_connection(env::var("DATABASE_URL").unwrap())
+            .await
+            .unwrap(),
+    };
+    let start_time = time::Instant::now();
+    let dev_user_id = UserId::from_str(&env::var("DEV_ID").unwrap_or_default()).unwrap_or_default();
+
+    println!("Amibot is ready");
+    Ok(Data {
+        start_time,
+        connections,
+        dev_user_id,
+        bot_user_id: ready.user.id,
+    })
+}
+
 #[tokio::main]
 async fn main() {
     dotenv().ok();
@@ -79,42 +113,7 @@ async fn main() {
         })
         .token(env::var("DISCORD_TOKEN").expect("missing DISCORD_TOKEN"))
         .intents(serenity::GatewayIntents::all())
-        .setup(|ctx, ready, framework| {
-            Box::pin(async move {
-                println!("Restering commands...");
-
-                #[cfg(not(debug_assertions))]
-                poise::builtins::register_globally(ctx, framework.options().commands.as_slice())
-                    .await
-                    .unwrap();
-
-                #[cfg(debug_assertions)]
-                poise::builtins::register_in_guild(
-                    ctx,
-                    framework.options().commands.as_slice(),
-                    std::env::var("DEV_SERVER_ID")
-                        .unwrap()
-                        .parse::<u64>()
-                        .unwrap()
-                        .into(),
-                )
-                .await
-                .unwrap();
-
-                let connections = Connections::new().await;
-                let start_time = time::Instant::now();
-                let dev_user_id =
-                    UserId::from_str(&env::var("DEV_ID").unwrap_or_default()).unwrap_or_default();
-
-                println!("Amibot is ready");
-                Ok(Data {
-                    start_time,
-                    connections,
-                    dev_user_id,
-                    bot_user_id: ready.user.id,
-                })
-            })
-        });
+        .setup(|ctx, ready, framework| Box::pin(on_ready(ctx, ready, framework)));
 
     framework.run().await.unwrap();
 }
