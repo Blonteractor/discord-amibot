@@ -49,15 +49,19 @@ impl User {
             .find_one_and_delete(doc! { "id": id.to_string() }, None)
             .await;
 
-        Self::sanitize_result(result)
+        Self::sanitize_result(id, mongo_client, result).await
     }
 
-    fn sanitize_result<T>(result: DbOperationResult<Option<T>>) -> DbOperationResult<Option<T>> {
+    async fn sanitize_result(
+        id: impl ToString,
+        mongo_client: &DatabaseConnection,
+        result: DbOperationResult<Option<User>>,
+    ) -> DbOperationResult<Option<User>> {
         if let Err(err) = &result {
             match err.kind.as_ref() {
                 mongodb::error::ErrorKind::BsonDeserialization(_) => {
-                    // Completely ignore it
-                    return Ok(None);
+                    // Attempt requery using from_id
+                    User::from_id(id, mongo_client).await
                 }
                 _ => {
                     return result;
@@ -85,7 +89,7 @@ impl User {
             )
             .await;
 
-        Self::sanitize_result(result)
+        Self::sanitize_result(id, mongo_client, result).await
     }
 
     pub async fn from_id<S: ToString>(

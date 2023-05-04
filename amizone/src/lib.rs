@@ -22,11 +22,10 @@ mod test {
 
         assert_eq!(new_user.id(), ID);
 
-        User::update(ID, "samepluserupdated", "samplepassupdated", &client)
+        let updated_user = User::update(ID, "samepluserupdated", "samplepassupdated", &client)
             .await
+            .unwrap()
             .unwrap();
-
-        let updated_user = User::from_id(ID, &client).await.unwrap().unwrap();
 
         assert_eq!(updated_user.credentials.username(), "samepluserupdated");
 
