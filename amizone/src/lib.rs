@@ -6,10 +6,10 @@ mod test {
     use dotenv::dotenv;
 
     #[tokio::test]
-    async fn database() {
+    async fn crud() {
         dotenv().ok();
 
-        const ID: &'static str = "1010";
+        const ID: &'static str = "486590017150517248";
         let client = new_db_connection(std::env::var("DATABASE_URL").unwrap().to_string())
             .await
             .unwrap();
