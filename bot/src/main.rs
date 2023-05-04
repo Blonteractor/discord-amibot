@@ -134,7 +134,7 @@ async fn main() {
                 case_insensitive_commands: true,
                 ..Default::default()
             },
-            commands: vec![help(), commands::login::login()],
+            commands: vec![help(), commands::login::login(), commands::logout::logout()],
             ..Default::default()
         })
         .token(env::var("DISCORD_TOKEN").expect("missing DISCORD_TOKEN"))
