@@ -33,6 +33,12 @@ pub type Context<'a> = poise::Context<'a, Data, Error>;
 
 async fn on_error(error: poise::FrameworkError<'_, Data, Error>) {
     println!("Encountered error: {}", error.to_string());
+
+    if let poise::FrameworkError::Command { error, ctx: _ } = error {
+        if let Some(cmd_err) = error.downcast_ref::<serenity::Error>() {
+            println!("{:#?}", cmd_err);
+        }
+    }
 }
 
 /// Show this menu
@@ -49,6 +55,25 @@ You can edit your message to the bot and the bot will edit its response.",
     };
     poise::builtins::help(ctx, command.as_deref(), config).await?;
     Ok(())
+}
+
+async fn loggedin_check(ctx: Context<'_>) -> Result<bool, Error> {
+    // Skip check for login
+    if ctx.command().name == "login" {
+        return Ok(true);
+    }
+
+    if amizoneapi::user::User::from_id(ctx.author().id.to_string(), &ctx.data().connections.db)
+        .await?
+        .is_none()
+    {
+        ctx.say("Not logged in, login using `/login` to get started.")
+            .await?;
+
+        Ok(false)
+    } else {
+        Ok(true)
+    }
 }
 
 async fn on_ready(
@@ -103,6 +128,7 @@ async fn main() {
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
             on_error: |error| Box::pin(on_error(error)),
+            command_check: Some(|ctx| Box::pin(loggedin_check(ctx))),
             prefix_options: poise::PrefixFrameworkOptions {
                 prefix: Some("~".into()),
                 case_insensitive_commands: true,

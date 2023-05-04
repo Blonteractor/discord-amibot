@@ -16,12 +16,18 @@ Example:
 Note: Your credentials are securely stored using encryption.";
 
 /// Log into Amizone with your credentials
-#[poise::command(slash_command, help_text_fn = "login_help", check = "login_check")]
+#[poise::command(
+    prefix_command,
+    slash_command,
+    help_text_fn = "login_help",
+    check = "login_check"
+)]
 pub async fn login(
     ctx: Context<'_>,
     #[description = "Your amizone username"] username: String,
     #[description = "Your amizone password"] password: String,
 ) -> Result<(), Error> {
+    ctx.defer_ephemeral().await?;
     let db_client = &ctx.data().connections.db;
     let amizone_conn = &ctx.data().connections.amizone;
     let caller_id = ctx.author().id.to_string();
