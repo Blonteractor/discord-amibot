@@ -1,4 +1,5 @@
 use amizone::api::types::{AmizoneApiError, DbError, StatusCode as ApiStatusCode};
+use log::{debug, info};
 use poise::serenity_prelude::{self as serenity, SerenityError};
 
 #[derive(Debug)]
@@ -37,10 +38,11 @@ impl std::fmt::Display for BotError {
 }
 
 pub async fn on_error(error: poise::FrameworkError<'_, crate::Data, BotError>) {
-    println!("Encountered error => {}", error);
+    info!("Encountered error => {}", error);
 
     // Error during a command
     if let poise::structs::FrameworkError::Command { error, ctx } = error {
+        debug!("Error during command {}", error);
         match error {
             BotError::AmizoneError(err) => {
                 if let ApiStatusCode::Unavailable = err.code() {

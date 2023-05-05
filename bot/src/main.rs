@@ -31,6 +31,7 @@ pub struct Connections {
 #[tokio::main]
 async fn main() {
     dotenv().ok();
+    env_logger::init();
 
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {

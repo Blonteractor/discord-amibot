@@ -1,5 +1,6 @@
 use super::error::BotError;
 use super::{Connections, Context, Data, Result, IGNORE_CHECK};
+use log::{info, trace};
 use std::env;
 use std::str::FromStr;
 use std::time;
@@ -15,7 +16,7 @@ pub async fn on_ready<'a>(
     ready: &Ready,
     framework: &Framework<Data, BotError>,
 ) -> Result<Data> {
-    println!("Registering commands...");
+    trace!("Registering commands");
 
     #[cfg(not(debug_assertions))]
     poise::builtins::register_globally(ctx, framework.options().commands.as_slice())
@@ -35,18 +36,21 @@ pub async fn on_ready<'a>(
     .await
     .unwrap();
 
+    trace!("Setting up connections");
     let connections = Connections {
-        amizone: amizoneapi::new_amizone_connection(env::var("AMIZONE_API_URL").unwrap())
-            .await
-            .unwrap(),
-        db: amizoneapi::new_db_connection(env::var("DATABASE_URL").unwrap())
+        amizone: amizoneapi::new_amizone_connection(
+            env::var("AMIZONE_API_URL").expect("missing AMIZONE_API_URL"),
+        )
+        .await
+        .unwrap(),
+        db: amizoneapi::new_db_connection(env::var("DATABASE_URL").expect("missing DATABASE_URL"))
             .await
             .unwrap(),
     };
     let start_time = time::Instant::now();
     let dev_user_id = UserId::from_str(&env::var("DEV_ID").unwrap_or_default()).unwrap_or_default();
 
-    println!("Amibot is ready");
+    info!("Amibot is ready");
     Ok(Data {
         start_time,
         connections,
