@@ -1,6 +1,6 @@
 use amizone::api::user::User;
 
-use crate::{Context, Error};
+use crate::{BotError, CommandResult, Context};
 
 static LOGIN_HELP: &'static str = "/login - Log into Amizone with your credentials.
 
@@ -26,7 +26,7 @@ pub async fn login(
     ctx: Context<'_>,
     #[description = "Your amizone username"] username: String,
     #[description = "Your amizone password"] password: String,
-) -> Result<(), Error> {
+) -> CommandResult {
     ctx.defer_ephemeral().await?;
     let db_client = &ctx.data().connections.db;
     let amizone_conn = &ctx.data().connections.amizone;
@@ -52,7 +52,7 @@ fn login_help() -> String {
     LOGIN_HELP.into()
 }
 
-async fn login_check(ctx: Context<'_>) -> Result<bool, Error> {
+async fn login_check(ctx: Context<'_>) -> Result<bool, BotError> {
     if User::from_id(ctx.author().id.to_string(), &ctx.data().connections.db)
         .await?
         .is_some()

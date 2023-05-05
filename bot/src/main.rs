@@ -1,13 +1,15 @@
 pub mod commands;
-
+pub mod error;
 use std::env;
 
+use error::BotError;
 use std::str::FromStr;
 use std::time;
 
 use amizone::api::{
     self as amizoneapi,
-    types::{AmizoneConnection, DatabaseConnection},
+    client::UserClient,
+    types::{AmizoneApiError, AmizoneConnection, DatabaseConnection},
 };
 use dotenv::dotenv;
 use poise::{
@@ -15,7 +17,10 @@ use poise::{
     Framework,
 };
 
-#[allow(dead_code)]
+pub type Result<T> = std::result::Result<T, BotError>;
+pub type CommandResult = Result<()>;
+pub type Context<'a> = poise::Context<'a, Data, BotError>;
+
 pub struct Data {
     pub start_time: time::Instant,
     pub connections: Connections,
@@ -28,25 +33,14 @@ pub struct Connections {
     pub db: DatabaseConnection,
 }
 
-pub type Error = Box<dyn std::error::Error + Send + Sync>;
-pub type Context<'a> = poise::Context<'a, Data, Error>;
-
-async fn on_error(error: poise::FrameworkError<'_, Data, Error>) {
-    println!("Encountered error: {}", error.to_string());
-
-    if let poise::FrameworkError::Command { error, ctx: _ } = error {
-        if let Some(cmd_err) = error.downcast_ref::<serenity::Error>() {
-            println!("{:#?}", cmd_err);
-        }
-    }
-}
+static IGNORE_CHECK: &[&'static str] = &["login", "help"];
 
 /// Show this menu
 #[poise::command(prefix_command, track_edits, slash_command)]
 pub async fn help(
     ctx: Context<'_>,
     #[description = "Specific command to show help about"] command: Option<String>,
-) -> Result<(), Error> {
+) -> CommandResult {
     let config = poise::builtins::HelpConfiguration {
         extra_text_at_bottom: "\
 Type ?help command for more info on a command.
@@ -57,9 +51,35 @@ You can edit your message to the bot and the bot will edit its response.",
     Ok(())
 }
 
-async fn loggedin_check(ctx: Context<'_>) -> Result<bool, Error> {
-    // Skip check for login
-    if ctx.command().name == "login" {
+// Initialize user client before every* command
+async fn init_client(ctx: Context<'_>) {
+    if IGNORE_CHECK.contains(&ctx.invoked_command_name()) {
+        return;
+    }
+
+    let db_client = &ctx.data().connections.db;
+    let amizone_conn = &ctx.data().connections.amizone;
+    let caller_id = ctx.author().id.to_string();
+
+    let invocation_data = match amizoneapi::user::User::from_id(caller_id, db_client).await {
+        Ok(user) => match user {
+            Some(user) => match user.get_client(amizone_conn.clone()) {
+                Ok(user_client) => Ok(user_client),
+                Err(amizone_error) => Err(amizone_error.into()),
+            },
+            None => Err(BotError::AmizoneError(AmizoneApiError::not_found(
+                "User not logged in",
+            ))),
+        },
+        Err(dberror) => Err(dberror.into()),
+    };
+
+    ctx.set_invocation_data::<Result<UserClient>>(invocation_data)
+        .await;
+}
+
+async fn loggedin_check(ctx: Context<'_>) -> Result<bool> {
+    if IGNORE_CHECK.contains(&ctx.invoked_command_name()) {
         return Ok(true);
     }
 
@@ -76,11 +96,11 @@ async fn loggedin_check(ctx: Context<'_>) -> Result<bool, Error> {
     }
 }
 
-async fn on_ready(
+async fn on_ready<'a>(
     ctx: &SerenityContext,
     ready: &Ready,
-    framework: &Framework<Data, Error>,
-) -> Result<Data, Error> {
+    framework: &Framework<Data, BotError>,
+) -> Result<Data> {
     println!("Registering commands...");
 
     #[cfg(not(debug_assertions))]
@@ -127,8 +147,9 @@ async fn main() {
 
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
-            on_error: |error| Box::pin(on_error(error)),
+            on_error: |error| Box::pin(error::on_error(error)),
             command_check: Some(|ctx| Box::pin(loggedin_check(ctx))),
+            pre_command: |ctx| Box::pin(init_client(ctx)),
             prefix_options: poise::PrefixFrameworkOptions {
                 prefix: Some("~".into()),
                 case_insensitive_commands: true,

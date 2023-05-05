@@ -1,6 +1,6 @@
 use amizone::api::user::User;
 
-use crate::{Context, Error};
+use crate::{CommandResult, Context};
 
 static FORGET_HELP: &'static str =
     "/logout - Logs out of Amizone and deletes your stored credentials from the database.
@@ -22,7 +22,7 @@ static FORGET_HELP: &'static str =
     help_text_fn = "forget_help",
     aliases("forget")
 )]
-pub async fn logout(ctx: Context<'_>) -> Result<(), Error> {
+pub async fn logout(ctx: Context<'_>) -> CommandResult {
     let db_client = &ctx.data().connections.db;
     let caller_id = ctx.author().id.to_string();
 
