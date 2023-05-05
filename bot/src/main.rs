@@ -47,6 +47,7 @@ async fn main() {
                 commands::help::help(),
                 commands::login::login(),
                 commands::logout::logout(),
+                commands::attendance::attendance(),
             ],
             ..Default::default()
         })
