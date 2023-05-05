@@ -48,6 +48,7 @@ async fn main() {
                 commands::login::login(),
                 commands::logout::logout(),
                 commands::attendance::attendance(),
+                commands::exam::datesheet(),
             ],
             ..Default::default()
         })
