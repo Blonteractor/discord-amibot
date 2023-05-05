@@ -1,17 +1,19 @@
+use std::sync::Arc;
+
 use amizone::api::types::{AmizoneApiError, DbError, StatusCode as ApiStatusCode};
 use log::{debug, info};
 use poise::serenity_prelude::{self as serenity, SerenityError};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum BotError {
     AmizoneError(AmizoneApiError),
-    SerenityError(SerenityError),
+    SerenityError(Arc<SerenityError>),
     DbError(DbError),
 }
 
 impl From<serenity::Error> for BotError {
     fn from(value: serenity::Error) -> Self {
-        BotError::SerenityError(value)
+        BotError::SerenityError(Arc::new(value))
     }
 }
 
@@ -24,6 +26,12 @@ impl From<AmizoneApiError> for BotError {
 impl From<DbError> for BotError {
     fn from(value: DbError) -> Self {
         BotError::DbError(value)
+    }
+}
+
+impl From<&mut BotError> for BotError {
+    fn from(value: &mut BotError) -> Self {
+        value.to_owned()
     }
 }
 
