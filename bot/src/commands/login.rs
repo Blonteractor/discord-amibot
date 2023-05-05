@@ -36,13 +36,15 @@ pub async fn login(
         .await?
         .get_client(amizone_conn.clone())?;
 
-    // Random call to the api to see if the credentials are correct
-    if amizone_client.get_user_profile().await.is_err() {
+    if let Ok(profile) = amizone_client.get_user_profile().await {
+        ctx.say(format!(
+            "Logged in as `{}` of `{}`, use the help command to get started.",
+            profile.name, profile.batch
+        ))
+        .await?;
+    } else {
         ctx.say("Incorrect credentials.").await?;
         User::forget(caller_id, db_client).await?;
-    } else {
-        ctx.say("Login successfull, use the help command to get started.")
-            .await?;
     }
 
     Ok(())
