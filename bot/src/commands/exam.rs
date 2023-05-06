@@ -20,6 +20,10 @@ pub async fn datesheet(ctx: Context<'_>) -> CommandResult {
 
     let (title, datesheet) = client.get_exam_schedule().await?;
 
+    if datesheet.is_empty() {
+        return Ok(());
+    }
+
     let mut message = format!("**{}**```", title);
     // let mut message = String::new;
 
@@ -29,8 +33,12 @@ pub async fn datesheet(ctx: Context<'_>) -> CommandResult {
             _ => ("", ""),
         };
 
-        //TODO: Make date prettier
-        let time = record.time.unwrap_or_default();
+        let time = record
+            .time
+            .unwrap_or_default()
+            .to_string()
+            .replace("T", " ")
+            .replace(":00Z", "");
         let mode = record.mode;
 
         message.push_str(&format!("📚 {} ({})\n", name, code));
