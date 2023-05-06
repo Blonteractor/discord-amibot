@@ -1,8 +1,10 @@
 use std::sync::Arc;
 
 use amizone::api::types::{AmizoneApiError, DbError, StatusCode as ApiStatusCode};
-use log::{debug, info};
+use log::debug;
 use poise::serenity_prelude::{self as serenity, SerenityError};
+
+use crate::Context;
 
 #[derive(Debug, Clone)]
 pub enum BotError {
@@ -35,33 +37,37 @@ impl From<&mut BotError> for BotError {
     }
 }
 
+impl BotError {
+    pub async fn handle(&self, ctx: Context<'_>) {
+        match self {
+            BotError::AmizoneError(err) => {
+                debug!("API Error: {}", err);
+                if let ApiStatusCode::Internal = err.code() {
+                    ctx.say(format!("Operation failed, {}", err.message()))
+                        .await
+                        .ok();
+                    return;
+                }
+                ctx.say("Amizone API returned an error.").await.ok();
+            }
+            BotError::SerenityError(err) => {
+                debug!("Discord Error: {}", err);
+                ctx.say("Error with.").await.ok();
+            }
+            BotError::DbError(err) => {
+                debug!("Database Error: {}", err);
+                ctx.say("Error retreving database.").await.ok();
+            }
+        }
+    }
+}
+
 impl std::fmt::Display for BotError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             BotError::AmizoneError(err) => write!(f, "Amizone error: {}", err),
             BotError::SerenityError(err) => write!(f, "Serenity error: {}", err),
             BotError::DbError(err) => write!(f, "Database error: {}", err),
-        }
-    }
-}
-
-pub async fn on_error(error: poise::FrameworkError<'_, crate::Data, BotError>) {
-    info!("Encountered error => {}", error);
-
-    // Error during a command
-    if let poise::structs::FrameworkError::Command { error, ctx } = error {
-        debug!("Error during command {}", error);
-        match error {
-            BotError::AmizoneError(err) => {
-                if let ApiStatusCode::Unavailable = err.code() {
-                    ctx.say("Operation failed, amizone might be down.")
-                        .await
-                        .unwrap();
-                    return;
-                }
-            }
-            BotError::SerenityError(_) => todo!(),
-            BotError::DbError(_) => todo!(),
         }
     }
 }

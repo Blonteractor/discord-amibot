@@ -35,7 +35,7 @@ async fn main() {
 
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
-            on_error: |error| Box::pin(error::on_error(error)),
+            on_error: |error| Box::pin(callbacks::on_error(error)),
             command_check: Some(|ctx| Box::pin(callbacks::loggedin_check(ctx))),
             pre_command: |ctx| Box::pin(callbacks::init_client(ctx)),
             prefix_options: poise::PrefixFrameworkOptions {

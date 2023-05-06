@@ -1,6 +1,6 @@
 use super::error::BotError;
 use super::{Connections, Context, Data, Result, IGNORE_CHECK};
-use log::{info, trace};
+use log::{debug, info, trace};
 use std::env;
 use std::str::FromStr;
 use std::time;
@@ -10,6 +10,8 @@ use poise::{
     serenity_prelude::{Context as SerenityContext, Ready, UserId},
     Framework,
 };
+
+use poise::structs::FrameworkError;
 
 pub async fn on_ready<'a>(
     ctx: &SerenityContext,
@@ -59,8 +61,54 @@ pub async fn on_ready<'a>(
     })
 }
 
+pub async fn on_error(error: poise::FrameworkError<'_, crate::Data, BotError>) {
+    info!("Encountered error => {}", error);
+
+    // Error during a command
+    match error {
+        FrameworkError::Command { error, ctx } => error.handle(ctx).await,
+        FrameworkError::CommandPanic { payload, ctx } => {
+            debug!(
+                "Command Panic: {}",
+                payload.unwrap_or("Payload missing".to_string())
+            );
+            ctx.say("Critical error in command.").await.ok();
+        }
+        FrameworkError::CommandCheckFailed { error, ctx } => {
+            if let Some(error) = error {
+                error.handle(ctx).await
+            }
+        }
+        FrameworkError::UnknownCommand {
+            ctx,
+            msg,
+            prefix: _,
+            msg_content,
+            framework: _,
+            invocation_data: _,
+            trigger: _,
+        } => {
+            msg.reply(ctx, "Unkown command").await.ok();
+            debug!("Unkown command: {}", msg_content);
+        }
+        FrameworkError::UnknownInteraction {
+            ctx: _,
+            framework: _,
+            interaction,
+        } => {
+            debug!("Unkown interaction: {:?}", interaction);
+        }
+        _ => (),
+    }
+}
+
 // Initialize user client before every* command
 pub async fn init_client(ctx: Context<'_>) {
+    trace!(
+        "Running pre_command for command {} for {}",
+        ctx.command().qualified_name,
+        ctx.author().id
+    );
     if IGNORE_CHECK.contains(&ctx.invoked_command_name()) {
         return;
     }
@@ -72,12 +120,24 @@ pub async fn init_client(ctx: Context<'_>) {
     let invocation_data = match amizoneapi::user::User::from_id(caller_id, db_client).await {
         Ok(user) => match user {
             Some(user) => match user.get_client(amizone_conn.clone()) {
-                Ok(user_client) => Ok(user_client),
-                Err(amizone_error) => Err(amizone_error.into()),
+                Ok(user_client) => {
+                    trace!(
+                        "User {} is logged in, pre_command succeeded.",
+                        ctx.author().id
+                    );
+                    Ok(user_client)
+                }
+                Err(amizone_error) => {
+                    debug!("Error in retrieving the client for {}", ctx.author().id);
+                    Err(amizone_error.into())
+                }
             },
-            None => Err(BotError::AmizoneError(AmizoneApiError::not_found(
-                "User not logged in",
-            ))),
+            None => {
+                trace!("User not logged in.");
+                Err(BotError::AmizoneError(AmizoneApiError::not_found(
+                    "User not logged in",
+                )))
+            }
         },
         Err(dberror) => Err(dberror.into()),
     };
