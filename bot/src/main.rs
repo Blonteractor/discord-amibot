@@ -45,8 +45,8 @@ async fn main() {
             },
             commands: vec![
                 commands::help::help(),
-                commands::login::login(),
-                commands::logout::logout(),
+                commands::authentication::login::login(),
+                commands::authentication::logout::logout(),
                 commands::attendance::attendance(),
                 commands::exam::datesheet(),
             ],
