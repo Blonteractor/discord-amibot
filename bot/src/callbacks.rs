@@ -74,11 +74,10 @@ pub async fn on_error(error: poise::FrameworkError<'_, crate::Data, BotError>) {
             );
             ctx.say("Critical error in command.").await.ok();
         }
-        FrameworkError::CommandCheckFailed { error, ctx } => {
-            if let Some(error) = error {
-                error.handle(ctx).await
-            }
-        }
+        FrameworkError::CommandCheckFailed {
+            error: Some(error),
+            ctx,
+        } => error.handle(ctx).await,
         FrameworkError::UnknownCommand {
             ctx,
             msg,

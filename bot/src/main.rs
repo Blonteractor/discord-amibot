@@ -14,7 +14,7 @@ use poise::serenity_prelude as serenity;
 pub type Result<T> = std::result::Result<T, BotError>;
 pub type CommandResult = Result<()>;
 pub type Context<'a> = poise::Context<'a, Data, BotError>;
-pub static IGNORE_CHECK: &[&'static str] = &["login", "help"];
+pub static IGNORE_CHECK: &[&str] = &["login", "help"];
 
 pub struct Data {
     pub start_time: time::Instant,

@@ -2,7 +2,7 @@ use amizone::api::user::User;
 
 use crate::{BotError, CommandResult, Context};
 
-static LOGIN_HELP: &'static str = "/login - Log into Amizone with your credentials.
+static LOGIN_HELP: &str = "/login - Log into Amizone with your credentials.
 
 Usage: /login [username] [password]
 

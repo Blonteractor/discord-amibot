@@ -2,7 +2,7 @@ use amizone::api::client::UserClient;
 
 use crate::{CommandResult, Context, Result};
 
-static DATESHEET_HELP: &'static str ="/datesheet - Retrieves your datesheet for upcoming examination.
+static DATESHEET_HELP: &str ="/datesheet - Retrieves your datesheet for upcoming examination.
 
 Usage: /datesheet
     
@@ -37,7 +37,7 @@ pub async fn datesheet(ctx: Context<'_>) -> CommandResult {
             .time
             .unwrap_or_default()
             .to_string()
-            .replace("T", " ")
+            .replace('T', " ")
             .replace(":00Z", "");
         let mode = record.mode;
 

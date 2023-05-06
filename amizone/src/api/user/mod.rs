@@ -6,8 +6,8 @@ use credentials::Credentials;
 use mongodb::bson::doc;
 use serde::{Deserialize, Serialize};
 
-static DATABSE_NAME: &'static str = "amibot_users";
-static COLLECTION_NAME: &'static str = "login_credentials";
+static DATABSE_NAME: &str = "amibot_users";
+static COLLECTION_NAME: &str = "login_credentials";
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct User {
@@ -63,12 +63,10 @@ impl User {
                     // Attempt requery using from_id
                     User::from_id(id, mongo_client).await
                 }
-                _ => {
-                    return result;
-                }
+                _ => result,
             }
         } else {
-            return result;
+            result
         }
     }
 

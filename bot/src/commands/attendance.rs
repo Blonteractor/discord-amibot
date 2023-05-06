@@ -2,7 +2,7 @@ use amizone::api::client::UserClient;
 
 use crate::{CommandResult, Context, Result};
 
-static ATTENDANCE_HELP: &'static str ="/attendance - Retrieves your attendance records for the current semester.
+static ATTENDANCE_HELP: &str ="/attendance - Retrieves your attendance records for the current semester.
 
 Usage: /attendance
     

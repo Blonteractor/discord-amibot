@@ -2,7 +2,7 @@ use amizone::api::user::User;
 
 use crate::{CommandResult, Context};
 
-static FORGET_HELP: &'static str =
+static FORGET_HELP: &str =
     "/logout - Logs out of Amizone and deletes your stored credentials from the database.
 
     Usage: /logout

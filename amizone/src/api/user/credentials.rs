@@ -136,7 +136,7 @@ impl Credentials {
     pub fn get_metadata(&self) -> String {
         let cipher = Aes256Gcm::new(PRIVATE_KEY.as_slice().into());
         let (nonce, metadata) =
-            Self::encrypt(&cipher, &format!("{}:{}", self.username(), self.password()));
+            Self::encrypt(&cipher, format!("{}:{}", self.username(), self.password()));
 
         let s = format!("{}{}", STANDARD.encode(nonce), STANDARD.encode(metadata));
         s
