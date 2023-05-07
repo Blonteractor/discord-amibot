@@ -5,6 +5,7 @@ use go_amizone::server::proto::v1::{
 };
 use tonic::Request;
 
+#[derive(Clone)]
 pub struct UserClient {
     metadata: UserMetaData,
     connection: AmizoneConnection,

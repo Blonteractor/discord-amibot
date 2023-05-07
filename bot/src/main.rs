@@ -1,15 +1,19 @@
 pub mod callbacks;
 pub mod commands;
 pub mod error;
-use std::env;
+use std::{collections::HashMap, env, sync::Arc};
 
 use error::BotError;
+use tokio::sync::Mutex;
 
 use std::time;
 
-use amizone::api::types::{AmizoneConnection, DatabaseConnection};
+use amizone::api::{
+    client::UserClient,
+    types::{AmizoneConnection, DatabaseConnection},
+};
 use dotenv::dotenv;
-use poise::serenity_prelude as serenity;
+use poise::serenity_prelude::{self as serenity, UserId};
 
 pub type Result<T> = std::result::Result<T, BotError>;
 pub type CommandResult = Result<()>;
@@ -21,6 +25,7 @@ pub struct Data {
     pub connections: Connections,
     pub dev_user_id: serenity::UserId,
     pub bot_user_id: serenity::UserId,
+    pub users_cache: Arc<Mutex<HashMap<UserId, UserClient>>>,
 }
 
 pub struct Connections {
