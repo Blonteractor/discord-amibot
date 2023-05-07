@@ -14,12 +14,28 @@ use amizone::api::{
     types::{AmizoneConnection, DatabaseConnection},
 };
 use dotenv::dotenv;
-use poise::serenity_prelude::{self as serenity, UserId};
+use poise::serenity_prelude::{self as serenity, Colour, UserId};
 
 pub type Result<T> = std::result::Result<T, BotError>;
 pub type CommandResult = Result<()>;
 pub type Context<'a> = poise::Context<'a, Data, BotError>;
 pub static IGNORE_CHECK: &[&str] = &["login", "help", "ping"];
+
+pub struct ColourScheme {
+    pub primary: Colour,
+    pub secondary: Colour,
+    pub tertiary: Colour,
+}
+
+impl ColourScheme {
+    pub fn amity_colours() -> Self {
+        Self {
+            primary: Colour::from_rgb(245, 194, 44),
+            secondary: Colour::from_rgb(14, 46, 78),
+            tertiary: Colour::from_rgb(189, 189, 189),
+        }
+    }
+}
 
 /// Returns the ping of the heartbeat in ms
 #[poise::command(prefix_command, slash_command)]
@@ -50,6 +66,7 @@ pub struct Data {
     pub connections: Connections,
     pub dev_user_id: serenity::UserId,
     pub bot_user_id: serenity::UserId,
+    pub colourscheme: ColourScheme,
     pub users_cache: Arc<Mutex<HashMap<UserId, UserClient>>>,
 }
 

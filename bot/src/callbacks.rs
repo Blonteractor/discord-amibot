@@ -60,6 +60,7 @@ pub async fn on_ready<'a>(
         start_time,
         connections,
         dev_user_id,
+        colourscheme: crate::ColourScheme::amity_colours(),
         bot_user_id: ready.user.id,
         users_cache: Arc::new(Mutex::new(HashMap::new())),
     })
