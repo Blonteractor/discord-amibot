@@ -1,6 +1,7 @@
 pub mod callbacks;
 pub mod commands;
 pub mod error;
+pub mod util;
 use std::{collections::HashMap, env, sync::Arc};
 
 use error::BotError;
@@ -18,7 +19,31 @@ use poise::serenity_prelude::{self as serenity, UserId};
 pub type Result<T> = std::result::Result<T, BotError>;
 pub type CommandResult = Result<()>;
 pub type Context<'a> = poise::Context<'a, Data, BotError>;
-pub static IGNORE_CHECK: &[&str] = &["login", "help"];
+pub static IGNORE_CHECK: &[&str] = &["login", "help", "ping"];
+
+/// Returns the ping of the heartbeat in ms
+#[poise::command(prefix_command, slash_command)]
+pub async fn ping(ctx: Context<'_>) -> CommandResult {
+    let shard_manager = ctx.framework().shard_manager.lock().await;
+    let runners = shard_manager.runners.lock().await;
+
+    let ping = runners
+        .iter()
+        .filter(|(id, _)| id.0 == ctx.serenity_context().shard_id)
+        .next()
+        .unwrap()
+        .1
+        .latency
+        .unwrap_or_default()
+        .as_millis();
+
+    drop(runners);
+    drop(shard_manager);
+
+    ctx.say(&format!("**{}ms**", ping)).await?;
+
+    Ok(())
+}
 
 pub struct Data {
     pub start_time: time::Instant,
@@ -49,6 +74,7 @@ async fn main() {
                 ..Default::default()
             },
             commands: vec![
+                ping(),
                 commands::help::help(),
                 commands::authentication::login::login(),
                 commands::authentication::logout::logout(),
