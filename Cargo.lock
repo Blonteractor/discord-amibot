@@ -224,6 +224,7 @@ dependencies = [
  "env_logger",
  "log",
  "poise",
+ "regex",
  "tokio",
 ]
 

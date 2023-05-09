@@ -99,6 +99,7 @@ async fn main() {
                 commands::exam::datesheet(),
                 commands::courses::courses(),
                 commands::mac::info::wifimacinfo(),
+                commands::mac::register::registerwifimac(),
             ],
             ..Default::default()
         })
