@@ -7,10 +7,12 @@ use poise::serenity_prelude::{self as serenity, SerenityError};
 use crate::Context;
 
 #[derive(Debug, Clone)]
+#[non_exhaustive]
 pub enum BotError {
     AmizoneError(AmizoneApiError),
     SerenityError(Arc<SerenityError>),
     DbError(DbError),
+    Custom(String),
 }
 
 impl From<serenity::Error> for BotError {
@@ -37,6 +39,18 @@ impl From<&mut BotError> for BotError {
     }
 }
 
+impl From<&str> for BotError {
+    fn from(value: &str) -> Self {
+        BotError::Custom(value.to_string())
+    }
+}
+
+impl From<String> for BotError {
+    fn from(value: String) -> Self {
+        BotError::Custom(value)
+    }
+}
+
 impl BotError {
     pub async fn handle(&self, ctx: Context<'_>) {
         match self {
@@ -52,11 +66,15 @@ impl BotError {
             }
             BotError::SerenityError(err) => {
                 debug!("Discord Error: {}", err);
-                ctx.say("Error with.").await.ok();
+                ctx.say("Error with the command, file an issue.").await.ok();
             }
             BotError::DbError(err) => {
                 debug!("Database Error: {}", err);
                 ctx.say("Error retreving database.").await.ok();
+            }
+            BotError::Custom(err) => {
+                debug!("Unhadled Custom Error: {}", err);
+                ctx.say("Error with the command, file an issue.").await.ok();
             }
         }
     }
@@ -68,6 +86,9 @@ impl std::fmt::Display for BotError {
             BotError::AmizoneError(err) => write!(f, "Amizone error: {}", err),
             BotError::SerenityError(err) => write!(f, "Serenity error: {}", err),
             BotError::DbError(err) => write!(f, "Database error: {}", err),
+            BotError::Custom(err) => {
+                write!(f, "Custom error () really should be handled): {}", err)
+            }
         }
     }
 }
