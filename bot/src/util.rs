@@ -8,6 +8,7 @@ pub async fn make_select_menu<'a, T: 'a>(
     ctx: crate::Context<'_>,
     pages: &'a [T],
     options: &[&str],
+    label: &str,
 ) -> Result<(), BotError>
 where
     &'a T: Into<CreateEmbed>,
@@ -34,7 +35,7 @@ where
         .components(|b| {
             b.create_action_row(|b| {
                 b.create_select_menu(|m| {
-                    m.custom_id(&select_menu_id).placeholder("Course").options(
+                    m.custom_id(&select_menu_id).placeholder(label).options(
                         |create_options_builder| {
                             for (i, option) in options.iter().enumerate() {
                                 create_options_builder.create_option(|create_option| {

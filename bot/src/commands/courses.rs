@@ -40,7 +40,7 @@ pub async fn courses(
         })
         .collect::<Vec<&str>>();
 
-    util::make_select_menu(ctx, courses.as_slice(), options.as_slice()).await?;
+    util::make_select_menu(ctx, courses.as_slice(), options.as_slice(), "Select Course").await?;
 
     Ok(())
 }
@@ -89,15 +89,21 @@ impl Into<CreateEmbed> for &AmizoneCourse {
         };
 
         let percentage = (attended as f64 / held as f64) * 100.0;
-        let percentage_str = format!("{:.2}%", percentage);
+        let percentage_str = format!("*{:.2}%*", percentage);
 
         CreateEmbed::default()
-            .title(format!("{} *{}*", name, code))
+            .title(format!("{} **{}**", name, code))
             .url(syllabus)
-            .field("Attended", attended, false)
-            .field("Total Classes", held, false)
-            .field("Marks Obtained", obtained_marks, false)
-            .field("Max Marks", max_marks, false)
+            .field(
+                "Attendance",
+                format!("`{}` / **{}** = {}", attended, held, percentage_str),
+                true,
+            )
+            .field(
+                "Internal Marks",
+                format!("`{}` / **{}**", obtained_marks, max_marks),
+                false,
+            )
             .field("Course Type", course_type, false)
             .to_owned()
     }
