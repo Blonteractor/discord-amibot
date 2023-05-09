@@ -97,6 +97,7 @@ async fn main() {
                 commands::authentication::logout::logout(),
                 commands::attendance::attendance(),
                 commands::exam::datesheet(),
+                commands::courses::courses(),
             ],
             ..Default::default()
         })
