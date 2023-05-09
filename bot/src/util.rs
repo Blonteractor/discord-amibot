@@ -10,7 +10,7 @@ pub async fn make_select_menu<'a, T: 'a>(
     options: &[&str],
 ) -> Result<(), BotError>
 where
-    &'a T: Into<CreateEmbed> + Clone,
+    &'a T: Into<CreateEmbed>,
 {
     if pages.len() != options.len() {
         return Err("Pages and options have an unequal len in make_select_menu".into());
