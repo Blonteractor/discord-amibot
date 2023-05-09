@@ -37,30 +37,6 @@ impl ColourScheme {
     }
 }
 
-/// Returns the ping of the heartbeat in ms
-#[poise::command(prefix_command, slash_command)]
-pub async fn ping(ctx: Context<'_>) -> CommandResult {
-    let shard_manager = ctx.framework().shard_manager.lock().await;
-    let runners = shard_manager.runners.lock().await;
-
-    let ping = runners
-        .iter()
-        .filter(|(id, _)| id.0 == ctx.serenity_context().shard_id)
-        .next()
-        .unwrap()
-        .1
-        .latency
-        .unwrap_or_default()
-        .as_millis();
-
-    drop(runners);
-    drop(shard_manager);
-
-    ctx.say(&format!("**{}ms**", ping)).await?;
-
-    Ok(())
-}
-
 pub struct Data {
     pub start_time: time::Instant,
     pub connections: Connections,
@@ -91,8 +67,9 @@ async fn main() {
                 ..Default::default()
             },
             commands: vec![
-                ping(),
-                commands::help::help(),
+                commands::meta::ping(),
+                commands::meta::help(),
+                commands::meta::source(),
                 commands::authentication::login::login(),
                 commands::authentication::logout::logout(),
                 commands::attendance::attendance(),
