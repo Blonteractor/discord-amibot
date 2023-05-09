@@ -2,13 +2,13 @@ use amizone::api::client::UserClient;
 
 use crate::{CommandResult, Context, Result};
 
-static DATESHEET_HELP: &str ="/datesheet - Retrieves your datesheet for upcoming examination.
-
-Usage: /datesheet
-    
-Example: /datesheet
-    
-Note: This command requires you to be logged in using the /login command. If you are not logged in, you will be prompted to do so first.";
+static DATESHEET_HELP: &str = "/datesheet - Retrieve your datesheet for upcoming examinations.\n\n\
+Usage: /datesheet\n\n\
+Example:\n\
+/datesheet\n\n\
+Note: This command fetches and displays your datesheet for upcoming examinations.\
+If you have any scheduled exams, it will show the course name, course code, date, and exam mode.\
+If you don't have any upcoming exams, it will not return any information.";
 
 /// Retrieves your datesheet for upcoming examination
 #[poise::command(prefix_command, slash_command, help_text_fn = "datesheet_help")]

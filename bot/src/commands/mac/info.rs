@@ -2,10 +2,21 @@ use amizone::api::client::UserClient;
 
 use crate::{CommandResult, Context, Result};
 
-static WIFIMACINFO_HELP: &str = "";
+static WIFIMACINFO_HELP: &str = "/wifimacinfo - Retrieve information about WiFi MAC addresses registered on amizone.\n\n\
+Usage: /wifimacinfo\n\n\
+Alias: /wi \n\n\
+Example:\n\
+/wifimacinfo\n\n\
+Note: This command provides information about the registered WiFi MAC addresses, including the addresses, \
+the number of free slots, and the total number of slots available.";
 
 ///  Retrieves your attendance records for the current semester.
-#[poise::command(prefix_command, slash_command, help_text_fn = "wifimacinfo_help")]
+#[poise::command(
+    prefix_command,
+    slash_command,
+    help_text_fn = "wifimacinfo_help",
+    aliases("wi")
+)]
 pub async fn wifimacinfo(ctx: Context<'_>) -> CommandResult {
     ctx.defer().await?;
     let mut invocation_data = ctx.invocation_data::<Result<UserClient>>().await.unwrap();
