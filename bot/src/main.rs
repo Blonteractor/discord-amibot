@@ -98,6 +98,7 @@ async fn main() {
                 commands::attendance::attendance(),
                 commands::exam::datesheet(),
                 commands::courses::courses(),
+                commands::mac::info::wifimacinfo(),
             ],
             ..Default::default()
         })
