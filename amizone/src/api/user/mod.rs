@@ -11,6 +11,7 @@ static COLLECTION_NAME: &str = "login_credentials";
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct User {
+    #[serde(rename = "_id")]
     id: String,
 
     #[serde(flatten)]
@@ -46,7 +47,7 @@ impl User {
         let creds = db.collection::<User>(COLLECTION_NAME);
 
         let result = creds
-            .find_one_and_delete(doc! { "id": id.to_string() }, None)
+            .find_one_and_delete(doc! { "_id": id.to_string() }, None)
             .await;
 
         Self::sanitize_result(id, mongo_client, result).await
@@ -81,7 +82,7 @@ impl User {
 
         let result = creds
             .find_one_and_update(
-                doc! { "id": id.to_string() },
+                doc! { "_id": id.to_string() },
                 doc! { "$set": { "metadata": Credentials::new(username, password).get_metadata() } },
                 None,
             )
@@ -97,7 +98,7 @@ impl User {
         let db = mongo_client.database(DATABSE_NAME);
         let creds = db.collection::<User>(COLLECTION_NAME);
 
-        let mut cursor = creds.find(doc! { "id": id.to_string() }, None).await?;
+        let mut cursor = creds.find(doc! { "_id": id.to_string() }, None).await?;
 
         if let Some(user) = cursor.try_next().await? {
             Ok(Some(user))
