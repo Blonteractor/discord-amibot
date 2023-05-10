@@ -19,6 +19,7 @@ use poise::serenity_prelude::{self as serenity, Colour, UserId};
 pub type Result<T> = std::result::Result<T, BotError>;
 pub type CommandResult = Result<()>;
 pub type Context<'a> = poise::Context<'a, Data, BotError>;
+type ApplicationContext<'a> = poise::ApplicationContext<'a, Data, BotError>;
 pub static IGNORE_CHECK: &[&str] = &["login", "help", "ping"];
 
 pub struct ColourScheme {
@@ -77,6 +78,7 @@ async fn main() {
                 commands::courses::courses(),
                 commands::mac::wifimac(),
                 commands::profile::profile(),
+                commands::faculty_feedback::facultyfeedback(),
             ],
             ..Default::default()
         })
