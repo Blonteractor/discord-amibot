@@ -129,7 +129,7 @@ impl UserClient {
         rating: i32,
         query_rating: i32,
         comment: impl ToString,
-    ) -> Result<()> {
+    ) -> Result<i32> {
         let request = self.prepare_request(FillFacultyFeedbackRequest {
             rating,
             query_rating,
@@ -137,10 +137,10 @@ impl UserClient {
         });
 
         let mut amizone = self.connection.lock().await;
-        amizone.fill_faculty_feedback(request).await?;
+        let filled = amizone.fill_faculty_feedback(request).await?.into_inner();
         drop(amizone);
 
-        Ok(())
+        Ok(filled.filled_for)
     }
 
     pub async fn get_class_schedule(&mut self, date: Date) -> Result<Vec<ScheduledClass>> {
