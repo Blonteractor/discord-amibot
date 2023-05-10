@@ -20,7 +20,7 @@ static WIFIMACDEREGISTER_HELP: &str = "/deregisterwifimac - DeRegister a WiFi MA
     help_text_fn = "wifimacderegister_help",
     aliases("wd")
 )]
-pub async fn deregisterwifimac(ctx: Context<'_>, address: String) -> CommandResult {
+pub async fn deregister(ctx: Context<'_>, address: String) -> CommandResult {
     ctx.defer().await?;
 
     if is_valid_mac(&address) {

@@ -1,6 +1,5 @@
-use amizone::api::client::UserClient;
-
 use crate::{CommandResult, Context, Result};
+use amizone::api::client::UserClient;
 
 static WIFIMACINFO_HELP: &str = "/wifimacinfo - Retrieve information about WiFi MAC addresses registered on amizone.\n\n\
 Usage: /wifimacinfo\n\n\
@@ -17,7 +16,7 @@ the number of free slots, and the total number of slots available.";
     help_text_fn = "wifimacinfo_help",
     aliases("wi")
 )]
-pub async fn wifimacinfo(ctx: Context<'_>) -> CommandResult {
+pub async fn info(ctx: Context<'_>) -> CommandResult {
     ctx.defer().await?;
     let mut invocation_data = ctx.invocation_data::<Result<UserClient>>().await.unwrap();
 

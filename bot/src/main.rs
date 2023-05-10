@@ -75,8 +75,7 @@ async fn main() {
                 commands::attendance::attendance(),
                 commands::exam::datesheet(),
                 commands::courses::courses(),
-                commands::mac::info::wifimacinfo(),
-                commands::mac::register::registerwifimac(),
+                commands::mac::wifimac(),
             ],
             ..Default::default()
         })

@@ -20,7 +20,7 @@ static WIFIMACREGISTER_HELP: &str = "/registerwifimac - Register a WiFi MAC addr
     help_text_fn = "wifimacregister_help",
     aliases("wr")
 )]
-pub async fn registerwifimac(ctx: Context<'_>, address: String) -> CommandResult {
+pub async fn register(ctx: Context<'_>, address: String) -> CommandResult {
     ctx.defer().await?;
 
     if is_valid_mac(&address) {
