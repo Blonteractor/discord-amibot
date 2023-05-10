@@ -4,3 +4,4 @@ pub mod courses;
 pub mod exam;
 pub mod mac;
 pub mod meta;
+pub mod profile;

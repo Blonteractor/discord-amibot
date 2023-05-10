@@ -32,7 +32,7 @@ impl ColourScheme {
         Self {
             primary: Colour::from_rgb(245, 194, 44),
             secondary: Colour::from_rgb(14, 46, 78),
-            tertiary: Colour::from_rgb(189, 189, 189),
+            tertiary: Colour::from_rgb(247, 143, 70),
         }
     }
 }
@@ -76,6 +76,7 @@ async fn main() {
                 commands::exam::datesheet(),
                 commands::courses::courses(),
                 commands::mac::wifimac(),
+                commands::profile::profile(),
             ],
             ..Default::default()
         })
