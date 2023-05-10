@@ -6,7 +6,7 @@ use amizone::api::client::UserClient;
 use amizone::api::types::Course;
 use poise::serenity_prelude::CreateEmbed;
 
-static COURSES_HELP: &'static str ="/courses - Retrieve and select your courses.\n\n\
+static COURSES_HELP: &str ="/courses - Retrieve and select your courses.\n\n\
 Usage: /courses [semester]\n\n\
 Arguments:\n\
 - [semester]: Optional semester number. If provided, it fetches the courses for the specified semester. \
@@ -72,22 +72,22 @@ impl From<Course> for AmizoneCourse {
     }
 }
 
-impl Into<CreateEmbed> for &AmizoneCourse {
-    fn into(self) -> CreateEmbed {
-        let (attended, held) = match &self.attendance {
+impl From<&AmizoneCourse> for CreateEmbed {
+    fn from(value: &AmizoneCourse) -> Self {
+        let (attended, held) = match &value.attendance {
             Some(attendance) => (attendance.attended, attendance.held),
             _ => (-1, -1),
         };
 
-        let syllabus = &self.syllabus_doc;
-        let (obtained_marks, max_marks) = match self.internal_marks {
+        let syllabus = &value.syllabus_doc;
+        let (obtained_marks, max_marks) = match value.internal_marks {
             Some(ref marks) => (marks.have, marks.max),
             None => (-1f32, -1f32),
         };
 
-        let course_type = &self.r#type;
+        let course_type = &value.r#type;
 
-        let (code, name) = match self.r#ref {
+        let (code, name) = match value.r#ref {
             Some(ref course_ref) => (course_ref.code.as_str(), course_ref.name.as_str()),
             None => ("", ""),
         };

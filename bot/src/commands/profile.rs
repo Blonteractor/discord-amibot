@@ -1,7 +1,7 @@
 use crate::{CommandResult, Context, Result};
 use amizone::api::client::UserClient;
 
-static PROFILE_HELP: &'static str = "/profile - Retrieve and display your user profile information.\n\n\
+static PROFILE_HELP: &str = "/profile - Retrieve and display your user profile information.\n\n\
 Usage: /profile\n\n\
 Example:\n\
 /profile\n\n\
@@ -37,13 +37,13 @@ pub async fn profile(ctx: Context<'_>) -> CommandResult {
                 .field("Batch", batch, true)
                 .field(
                     "Date Of Birth",
-                    dob.to_string().split("T").next().unwrap_or_default(),
+                    dob.to_string().split('T').next().unwrap_or_default(),
                     true,
                 )
                 .field("Blood Group", blood_group, true)
                 .field(
                     "Valid Till",
-                    validity.to_string().split("T").next().unwrap_or_default(),
+                    validity.to_string().split('T').next().unwrap_or_default(),
                     true,
                 )
                 .field("ID number", id_number, true)

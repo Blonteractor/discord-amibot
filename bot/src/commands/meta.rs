@@ -8,8 +8,7 @@ pub async fn ping(ctx: Context<'_>) -> CommandResult {
 
     let ping = runners
         .iter()
-        .filter(|(id, _)| id.0 == ctx.serenity_context().shard_id)
-        .next()
+        .find(|(id, _)| id.0 == ctx.serenity_context().shard_id)
         .unwrap()
         .1
         .latency
