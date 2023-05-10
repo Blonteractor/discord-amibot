@@ -32,8 +32,8 @@ pub async fn help(
 ) -> CommandResult {
     let config = poise::builtins::HelpConfiguration {
         extra_text_at_bottom: "\
-Type ?help command for more info on a command.
-You can edit your message to the bot and the bot will edit its response.",
+Type ~help command for more info on a command.
+You need to use /login before you can use most commands.",
         ..Default::default()
     };
     poise::builtins::help(ctx, command.as_deref(), config).await?;

@@ -6,16 +6,20 @@ use amizone::api::client::UserClient;
 use amizone::api::types::Course;
 use poise::serenity_prelude::CreateEmbed;
 
-static DATESHEET_HELP: &'static str ="/datesheet - Retrieves your datesheet for upcoming examination.
+static COURSES_HELP: &'static str ="/courses - Retrieve and select your courses.\n\n\
+Usage: /courses [semester]\n\n\
+Arguments:\n\
+- [semester]: Optional semester number. If provided, it fetches the courses for the specified semester. \
+If not provided, it fetches the courses for the current semester.\n\n\
+Example:\n\
+/courses\n\
+/courses 3\n\n\
+Note: This command retrieves and displays your courses. It allows you to select a course from the provided list \
+of options. If you specify a semester, it fetches the courses for that specific semester. Otherwise, \
+it fetches the courses for the current semester.";
 
-Usage: /datesheet
-    
-Example: /datesheet
-    
-Note: This command requires you to be logged in using the /login command. If you are not logged in, you will be prompted to do so first.";
-
-/// Retrieves your datesheet for upcoming examination
-#[poise::command(prefix_command, slash_command, help_text_fn = "datesheet_help")]
+/// Retrieve and select your courses
+#[poise::command(prefix_command, slash_command, help_text_fn = "courses_help")]
 pub async fn courses(
     ctx: Context<'_>,
     #[description = "Semester number"] semester: Option<usize>,
@@ -45,8 +49,8 @@ pub async fn courses(
     Ok(())
 }
 
-fn datesheet_help() -> String {
-    DATESHEET_HELP.into()
+fn courses_help() -> String {
+    COURSES_HELP.into()
 }
 
 #[derive(Clone)]
