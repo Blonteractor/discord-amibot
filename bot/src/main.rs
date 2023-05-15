@@ -79,6 +79,7 @@ async fn main() {
                 commands::mac::wifimac(),
                 commands::profile::profile(),
                 commands::faculty_feedback::facultyfeedback(),
+                commands::schedule::schedule(),
             ],
             ..Default::default()
         })

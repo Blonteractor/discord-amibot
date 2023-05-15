@@ -6,3 +6,4 @@ pub mod faculty_feedback;
 pub mod mac;
 pub mod meta;
 pub mod profile;
+pub mod schedule;
