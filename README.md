@@ -2,11 +2,11 @@
 
 [![Discord](https://img.shields.io/static/v1?logo=Discord&logoColor=fff&labelColor=5562ea&label=Amibot%20Early%20Access&message=⬅️%20Click%20to%20use%20&color=50524f)](https://discord.gg/T9ZDVTw4mQ)
 
-[![Issues](https://img.shields.io/github/issues/blonteractor/discord-amibot?logo=github)](https://github.com/achintya-7/amibot-tg/issues)
-[![License](https://img.shields.io/github/license/blonteractor/discord-amibot)](./LICENSE)
-![Rust](https://img.shields.io/badge/rust-%23000000.svg?style=flat&logo=rust&logoColor=white)
-[![MongoDB Logo](https://img.shields.io/badge/-MongoDB-47A248?logo=MongoDB&logoColor=fff)](mongodb)
+![Rust](https://img.shields.io/badge/Rust-%23000000.svg?style=flat&logo=rust&logoColor=white)
+![MongoDB Logo](https://img.shields.io/badge/-MongoDB-47A248?logo=MongoDB&logoColor=fff)
 [![go-amizone Logo](https://img.shields.io/badge/go%20amizone-2D8CFF?logo=go&logoColor=white)](https://github.com/ditsuke/go-amizone)
+[![Issues](https://img.shields.io/github/issues/blonteractor/discord-amibot?logo=github)](https://github.com/blonteractor/discord-amibot/issues)
+[![License](https://img.shields.io/github/license/blonteractor/discord-amibot)](./LICENSE)
 
 This is a Discord bot that allows users to access their student portal directly in Discord. The bot is written in Rust and uses [go-amizone](https://github.com/ditsuke/go-amizone) as its backend.
 This project uses [poise.rs](https://github.com/serenity-rs/poise) as its Discord bot framework.
