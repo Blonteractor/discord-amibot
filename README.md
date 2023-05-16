@@ -1,5 +1,13 @@
 # Amibot
 
+[![Discord](https://img.shields.io/static/v1?logo=Telegram&logoColor=fff&labelColor=1e96d1&label=Amibot&message=⬅️%20Click%20to%20use%20&color=50524f)](#)
+
+[![Issues](https://img.shields.io/github/issues/blonteractor/discord-amibot?logo=github)](https://github.com/achintya-7/amibot-tg/issues)
+[![License](https://img.shields.io/github/license/blonteractor/discord-amibot)](./LICENSE)
+![Rust](https://img.shields.io/badge/rust-%23000000.svg?style=flat&logo=rust&logoColor=white)
+[![MongoDB Logo](https://img.shields.io/badge/-MongoDB-47A248?logo=MongoDB&logoColor=fff)](mongodb)
+[![go-amizone Logo](https://img.shields.io/badge/go%20amizone-2D8CFF?logo=go&logoColor=white)](https://github.com/ditsuke/go-amizone)
+
 This is a Discord bot that allows users to access their student portal directly in Discord. The bot is written in Rust and uses [go-amizone](https://github.com/ditsuke/go-amizone) as its backend.
 This project uses [poise.rs](https://github.com/serenity-rs/poise) as its Discord bot framework.
 
@@ -19,17 +27,17 @@ This project uses [poise.rs](https://github.com/serenity-rs/poise) as its Discor
 
 ## Commands
 
-**Note: Bot is in active developement, most commands below dont exist yet**
+> **Note**: Bot is in active developement, most commands below dont exist yet
 
--   `/attendance`: Displays the user's attendance for the current semester.
--   `/schedule <YYYY-MM-DD>`: Displays the user's schedule for the given date.
--   `/exams`: Displays the user's exam schedule for the current semester.
--   `/semesters`: Displays a list of past and current semesters.
--   `/courses <semester_ref>`: Displays a list of courses for the given semester.
--   `/profile`: Displays the user's profile information.
--   `/wifi`: Displays the user's registered WiFi MAC addresses.
--   `/wifi <ACTION> <MAC>`: Registers/Derigsters a WiFi MAC address for the user.
--   `/feedback <rating> <query_rating> <comment>`: Fills the faculty feedback.
+- `/attendance`: Displays the user's attendance for the current semester.
+- `/schedule <YYYY-MM-DD>`: Displays the user's schedule for the given date.
+- `/exams`: Displays the user's exam schedule for the current semester.
+- `/semesters`: Displays a list of past and current semesters.
+- `/courses <semester_ref>`: Displays a list of courses for the given semester.
+- `/profile`: Displays the user's profile information.
+- `/wifi`: Displays the user's registered WiFi MAC addresses.
+- `/wifi <ACTION> <MAC>`: Registers/Derigsters a WiFi MAC address for the user.
+- `/feedback <rating> <query_rating> <comment>`: Fills the faculty feedback.
 
 ## Contributing
 
@@ -37,4 +45,4 @@ Contributions are welcome! If you find a bug or have a feature request, please o
 
 ## License
 
-This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
+This project is licensed under the [MIT License](./LICENSE).
