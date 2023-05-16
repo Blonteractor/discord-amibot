@@ -28,6 +28,8 @@ pub async fn logout(ctx: Context<'_>) -> CommandResult {
 
     User::forget(caller_id, db_client).await?;
 
+    ctx.say("Logged out successfully.").await?;
+
     Ok(())
 }
 
