@@ -26,12 +26,17 @@ pub async fn profile(ctx: Context<'_>) -> CommandResult {
     let validity = profile.enrollment_validity.unwrap_or_default();
     let program = profile.program;
     let id_number = profile.id_card_number;
+    let uuid = profile.uuid;
     let colour = ctx.data().colourscheme.tertiary;
 
     ctx.send(|b| {
         b.embed(|e| {
             e.color(colour)
                 .title(name)
+                .image(format!(
+                    "https://img.amizone.net/AWSImageNew.ashx?Type=7&amp;ID={}",
+                    uuid
+                ))
                 .field("Enrollement Number", enrollement_number, true)
                 .field("Program", program, true)
                 .field("Batch", batch, true)
