@@ -1,6 +1,6 @@
 # Amibot
 
-[![Discord](https://img.shields.io/static/v1?logo=Telegram&logoColor=fff&labelColor=1e96d1&label=Amibot&message=⬅️%20Click%20to%20use%20&color=50524f)](#)
+[![Discord](https://img.shields.io/static/v1?logo=Discord&logoColor=fff&labelColor=5562ea&label=Amibot%20Early%20Access&message=⬅️%20Click%20to%20use%20&color=50524f)](https://discord.gg/T9ZDVTw4mQ)
 
 [![Issues](https://img.shields.io/github/issues/blonteractor/discord-amibot?logo=github)](https://github.com/achintya-7/amibot-tg/issues)
 [![License](https://img.shields.io/github/license/blonteractor/discord-amibot)](./LICENSE)
