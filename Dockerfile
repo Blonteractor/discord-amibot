@@ -19,7 +19,7 @@ FROM ubuntu:latest
 # Install necessary dependencies
 RUN apt-get update && apt-get install -y curl
 
-ENV GO_AMIZONE_VERSION 0.6.1
+ENV GO_AMIZONE_VERSION 0.8.0
 
 # Expose the port for Discord communication
 EXPOSE 443
