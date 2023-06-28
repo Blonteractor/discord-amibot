@@ -27,7 +27,7 @@ This project uses [poise.rs](https://github.com/serenity-rs/poise) as its Discor
 
 ## Commands
 
-> **Note**: Bot is in active developement, most commands below dont exist yet
+> **Note**: Bot is in active developement, all commands might not be stable, see [issues](https://github.com/Blonteractor/discord-amibot/issues)
 
 - `/attendance`: Displays the user's attendance for the current semester.
 - `/schedule <YYYY-MM-DD>`: Displays the user's schedule for the given date.
