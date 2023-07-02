@@ -10,10 +10,13 @@ COPY amizone amizone
 COPY Cargo.toml Cargo.toml
 COPY Cargo.lock Cargo.lock
 
+# Clone the protobuf dependencies
+RUN git clone https://www.github.com/googleapis/googleapis.git ./amizone/proto/googleapis
+
 # Build the Bot
 RUN cargo build --release
 
-# Stage 2: Create minimal Debian buster image
+# Stage 2: Create minimal ubuntu image, for running the bot
 FROM ubuntu:latest
 
 # Install necessary dependencies
