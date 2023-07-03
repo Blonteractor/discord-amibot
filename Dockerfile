@@ -11,7 +11,9 @@ COPY Cargo.toml Cargo.toml
 COPY Cargo.lock Cargo.lock
 
 # Clone the protobuf dependencies
-RUN git clone https://www.github.com/googleapis/googleapis.git ./amizone/proto/googleapis
+RUN <<EOF
+ [ "$(ls -A ./amizone/proto/googleapis)" ] && echo "Found protobuf deps" || git clone https://www.github.com/googleapis/googleapis.git ./amizone/proto/googleapis
+EOF
 
 # Build the Bot
 RUN cargo build --release
@@ -41,6 +43,11 @@ RUN curl -LO https://github.com/ditsuke/go-amizone/releases/download/v$GO_AMIZON
 mv amizone-api-server_linux_amd64 /app/amizone-api-server && chmod 755 /app/amizone-api-server
 
 # Create entrypoint script
-RUN echo "/app/amizone-api-server &" >>/app/entrypoint.sh && echo "/app/bot" >>/app/entrypoint.sh && chmod +x /app/entrypoint.sh
+COPY <<EOF /app/entrypoint.sh
+/app/amizone-api-server &
+/app/bot
+EOF
+RUN chmod +x /app/entrypoint.sh
+
 
 CMD ["/bin/sh", "/app/entrypoint.sh"]
