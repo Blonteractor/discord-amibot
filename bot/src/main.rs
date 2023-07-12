@@ -59,7 +59,7 @@ pub struct Connections {
 #[shuttle_runtime::main]
 async fn poise() -> ShuttlePoise<Data, BotError> {
     dotenv().ok();
-    env_logger::init();
+    // env_logger::init();
 
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
