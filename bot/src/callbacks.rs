@@ -2,7 +2,6 @@ use super::error::BotError;
 use super::{Connections, Context, Data, Result, IGNORE_CHECK};
 use log::{debug, info, trace};
 use std::collections::HashMap;
-use std::env;
 use std::str::FromStr;
 use std::sync::Arc;
 use std::time;
@@ -20,6 +19,7 @@ pub async fn on_ready<'a>(
     ctx: &SerenityContext,
     ready: &Ready,
     framework: &Framework<Data, BotError>,
+    secrets_store: shuttle_secrets::SecretStore,
 ) -> Result<Data> {
     trace!("Registering commands");
 
@@ -32,28 +32,40 @@ pub async fn on_ready<'a>(
     poise::builtins::register_in_guild(
         ctx,
         framework.options().commands.as_slice(),
-        std::env::var("DEV_SERVER_ID")
-            .unwrap()
+        secrets_store
+            .get("DEV_SERVER_ID")
+            .expect("'DEV_SERVER_ID' not found in dev build")
             .parse::<u64>()
-            .unwrap()
-            .into(),
+            .expect("Invalid value for 'DEV_SERVER_ID'")
+            .into(), // std::env::var("DEV_SERVER_ID")
+                     //     .unwrap()
+                     //     .parse::<u64>()
+                     //     .unwrap()
+                     //     .into(),
     )
     .await
-    .unwrap();
+    .expect("Error registering commands in dev server");
 
     trace!("Setting up connections");
     let connections = Connections {
         amizone: amizoneapi::new_amizone_connection(
-            env::var("AMIZONE_API_URL").expect("missing AMIZONE_API_URL"),
+            secrets_store
+                .get("AMIZONE_API_URL")
+                .expect("'AMIZONE_API_URL' not found"), // env::var("AMIZONE_API_URL").expect("missing AMIZONE_API_URL"),
         )
         .await
-        .unwrap(),
-        db: amizoneapi::new_db_connection(env::var("DATABASE_URL").expect("missing DATABASE_URL"))
-            .await
-            .unwrap(),
+        .expect("Error establishing amizone connection"),
+        db: amizoneapi::new_db_connection(
+            secrets_store
+                .get("DATABASE_URL")
+                .expect("'DATABASE_URL' not found"),
+        )
+        .await
+        .expect("Error establishing database connection"),
     };
     let start_time = time::Instant::now();
-    let dev_user_id = UserId::from_str(&env::var("DEV_ID").unwrap_or_default()).unwrap_or_default();
+    let dev_user_id =
+        UserId::from_str(&secrets_store.get("DEV_ID").unwrap_or_default()).unwrap_or_default();
 
     info!("Amibot is ready");
     Ok(Data {

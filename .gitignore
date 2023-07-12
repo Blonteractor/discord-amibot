@@ -1,3 +1,5 @@
 target
 .env
 .vscode
+Secrets.toml
+PRIVATE_KEY

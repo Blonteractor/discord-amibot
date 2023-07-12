@@ -13,6 +13,7 @@ use go_amizone::server::proto::v1::amizone_service_client::AmizoneServiceClient;
 use tonic::Status;
 
 pub async fn new_amizone_connection(addr: impl ToString) -> Result<AmizoneConnection> {
+    dbg!(addr.to_string());
     if let Ok(connection) = AmizoneServiceClient::connect(addr.to_string()).await {
         Ok(Arc::new(Mutex::new(connection)))
     } else {

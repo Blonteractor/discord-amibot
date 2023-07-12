@@ -2,7 +2,7 @@ pub mod callbacks;
 pub mod commands;
 pub mod error;
 pub mod util;
-use std::{collections::HashMap, env, sync::Arc};
+use std::{collections::HashMap, sync::Arc};
 
 use anyhow::Context as _;
 use shuttle_poise::ShuttlePoise;
@@ -17,7 +17,7 @@ use amizone::api::{
     client::UserClient,
     types::{AmizoneConnection, DatabaseConnection},
 };
-use dotenv::dotenv;
+
 use poise::serenity_prelude::{self as serenity, Colour, UserId};
 
 pub type Result<T> = std::result::Result<T, BotError>;
@@ -57,10 +57,9 @@ pub struct Connections {
 }
 
 #[shuttle_runtime::main]
-async fn poise() -> ShuttlePoise<Data, BotError> {
-    dotenv().ok();
-    // env_logger::init();
-
+async fn poise(
+    #[shuttle_secrets::Secrets] secrets_store: SecretStore,
+) -> ShuttlePoise<Data, BotError> {
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
             on_error: |error| Box::pin(callbacks::on_error(error)),
@@ -87,9 +86,15 @@ async fn poise() -> ShuttlePoise<Data, BotError> {
             ],
             ..Default::default()
         })
-        .token(env::var("DISCORD_TOKEN").expect("missing DISCORD_TOKEN"))
+        .token(
+            secrets_store
+                .get("DISCORD_TOKEN")
+                .context("'DISCORD_TOKEN' was not found")?,
+        )
         .intents(serenity::GatewayIntents::all())
-        .setup(|ctx, ready, framework| Box::pin(callbacks::on_ready(ctx, ready, framework)))
+        .setup(|ctx, ready, framework| {
+            Box::pin(callbacks::on_ready(ctx, ready, framework, secrets_store))
+        })
         .build()
         .await
         .map_err(shuttle_runtime::CustomError::new)?;
