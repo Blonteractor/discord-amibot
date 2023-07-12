@@ -4,6 +4,10 @@ pub mod error;
 pub mod util;
 use std::{collections::HashMap, env, sync::Arc};
 
+use anyhow::Context as _;
+use shuttle_poise::ShuttlePoise;
+use shuttle_secrets::SecretStore;
+
 use error::BotError;
 use tokio::sync::Mutex;
 
@@ -52,8 +56,8 @@ pub struct Connections {
     pub db: DatabaseConnection,
 }
 
-#[tokio::main]
-async fn main() {
+#[shuttle_runtime::main]
+async fn poise() -> ShuttlePoise<Data, BotError> {
     dotenv().ok();
     env_logger::init();
 
@@ -85,7 +89,10 @@ async fn main() {
         })
         .token(env::var("DISCORD_TOKEN").expect("missing DISCORD_TOKEN"))
         .intents(serenity::GatewayIntents::all())
-        .setup(|ctx, ready, framework| Box::pin(callbacks::on_ready(ctx, ready, framework)));
+        .setup(|ctx, ready, framework| Box::pin(callbacks::on_ready(ctx, ready, framework)))
+        .build()
+        .await
+        .map_err(shuttle_runtime::CustomError::new)?;
 
-    framework.run().await.unwrap();
+    Ok(framework.into())
 }

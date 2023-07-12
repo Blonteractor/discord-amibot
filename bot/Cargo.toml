@@ -14,3 +14,8 @@ env_logger = "0.10.0"
 log = "0.4.17"
 regex = "1.7.2"
 chrono = {version = "0.4.24", features = ["clock"] }
+shuttle-runtime = "0.21.0"
+shuttle-poise = "0.21.0"
+shuttle-secrets = "0.21.0"
+anyhow = "1.0.71"
+shuttle-shared-db = { version = "0.21.0", features = ["mongodb"] }
