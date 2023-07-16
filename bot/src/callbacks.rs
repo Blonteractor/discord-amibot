@@ -26,20 +26,20 @@ pub async fn on_ready<'a>(
     #[cfg(not(debug_assertions))]
     poise::builtins::register_globally(ctx, framework.options().commands.as_slice())
         .await
-        .unwrap();
+        .expect("Failed to register commands globally");
 
     #[cfg(debug_assertions)]
     poise::builtins::register_in_guild(
         ctx,
         framework.options().commands.as_slice(),
         std::env::var("DEV_SERVER_ID")
-            .unwrap()
+            .expect("`DEV_SERVER_ID` not found in dev build")
             .parse::<u64>()
-            .unwrap()
+            .expect("Invalid value for `DEV_SERVER_ID`")
             .into(),
     )
     .await
-    .unwrap();
+    .expect("Failed to register commands in dev guild");
 
     trace!("Setting up connections");
     let connections = Connections {
@@ -47,10 +47,12 @@ pub async fn on_ready<'a>(
             env::var("AMIZONE_API_URL").expect("missing AMIZONE_API_URL"),
         )
         .await
-        .unwrap(),
-        db: amizoneapi::new_db_connection(env::var("DATABASE_URL").expect("missing DATABASE_URL"))
-            .await
-            .unwrap(),
+        .expect("`AMIZONE_API_URL` not found"),
+        db: amizoneapi::new_db_connection(
+            env::var("DATABASE_URL").expect("missing `DATABASE_URL`"),
+        )
+        .await
+        .expect("Failed to init connection to go-amizone"),
     };
     let start_time = time::Instant::now();
     let dev_user_id = UserId::from_str(&env::var("DEV_ID").unwrap_or_default()).unwrap_or_default();

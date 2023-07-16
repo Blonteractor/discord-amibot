@@ -87,5 +87,5 @@ async fn main() {
         .intents(serenity::GatewayIntents::all())
         .setup(|ctx, ready, framework| Box::pin(callbacks::on_ready(ctx, ready, framework)));
 
-    framework.run().await.unwrap();
+    framework.run().await.expect("Failed to run framework");
 }
