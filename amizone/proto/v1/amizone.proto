@@ -9,133 +9,225 @@ import "protoc-gen-openapiv2/options/annotations.proto";
 
 option go_package = "github.com/ditsuke/go-amizone/server/gen/go/api_v1";
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
-  info: {
-    title: "Amizone API";
-    version: "0.6.0";
-    contact: {
-      name: "ditsuke";
-      url: "https://ditsuke.com";
-      email: "hello@ditsuke.com";
-    };
-    license: {
-      name: "GPL-2.0";
-      url: "https://github.com/ditsuke/go-amizone/blob/main/LICENSE";
-    };
-  };
-  host: "amizone.fly.dev",
-  external_docs: {
-    url: "https://github.com/ditsuke/go-amizone";
-    description: "More about go-amizone";
-  }
-  schemes: HTTP;
-  schemes: HTTPS;
-  consumes: "application/json";
-  produces: "application/json";
-  security_definitions: {
-    security: {
-      key: "BasicAuth";
-      value: {
-        type: TYPE_BASIC;
-        description: "Valid auth credentials for s.amizone.edu"
-      }
-    }
-  }
-  security: {
-    security_requirement: {
-      key: "BasicAuth";
-      value: {scope: "*"}
-    }
-  }
-  responses: {
-    key: "403";
-    value: {description: "Returned when the user does not have permission to access the resource."}
-  }
+  info : {title : "Amizone API";
+version : "0.7.0";
+contact : {
+name:
+  "ditsuke";
+url:
+  "https://ditsuke.com";
+email:
+  "hello@ditsuke.com";
 };
+license : {
+name:
+  "GPL-2.0";
+url:
+  "https://github.com/ditsuke/go-amizone/blob/main/LICENSE";
+};
+}
+;
+host : "amizone.fly.dev", external_docs : {
+url:
+  "https://github.com/ditsuke/go-amizone";
+description:
+  "More about go-amizone";
+}
+schemes : HTTP;
+schemes : HTTPS;
+consumes : "application/json";
+produces : "application/json";
+security_definitions : {
+security : {
+key:
+  "BasicAuth";
+value : {
+type:
+  TYPE_BASIC;
+description:
+  "Valid auth credentials for s.amizone.edu"
+}
+}
+}
+security : {
+security_requirement : {
+key:
+  "BasicAuth";
+value : {
+scope:
+  "*"
+}
+}
+}
+responses : {
+key:
+  "403";
+value : {
+description:
+  "Returned when the user does not have permission to access the resource."
+}
+}
+}
+;
 
-// @todo authentication service for JWT tokens as secure alternative to BasicAuth.
+// @todo authentication service for JWT tokens as secure alternative to
+// BasicAuth.
 service AmizoneService {
   rpc GetAttendance(EmptyMessage) returns (AttendanceRecords) {
-    option (google.api.http) = {get: "/api/v1/attendance"};
+    option (google.api.http) = {
+      get : "/api/v1/attendance"
+    };
   }
 
   rpc GetClassSchedule(ClassScheduleRequest) returns (ScheduledClasses) {
-    option (google.api.http) = {get: "/api/v1/class_schedule/{date.year}/{date.month}/{date.day}"};
+    option (google.api.http) = {
+      get : "/api/v1/class_schedule/{date.year}/{date.month}/{date.day}"
+    };
   }
 
-  // GetExamSchedule returns exam schedule. Amizone only allows access to schedules for the ongoing semester
-  // and only close to the exam dates, so we don't take any parameters.
+  // GetExamSchedule returns exam schedule. Amizone only allows access to
+  // schedules for the ongoing semester and only close to the exam dates, so we
+  // don't take any parameters.
   rpc GetExamSchedule(EmptyMessage) returns (ExaminationSchedule) {
-    option (google.api.http) = {get: "/api/v1/exam_schedule"};
+    option (google.api.http) = {
+      get : "/api/v1/exam_schedule"
+    };
   }
 
-  // GetSemesters returns a list of semesters that include past semesters and the current semester.
-  // These semesters can be used in other RPCs that consume them, for example GetCourses.
+  // GetSemesters returns a list of semesters that include past semesters and
+  // the current semester. These semesters can be used in other RPCs that
+  // consume them, for example GetCourses.
   rpc GetSemesters(EmptyMessage) returns (SemesterList) {
-    option (google.api.http) = {get: "/api/v1/semesters"};
+    option (google.api.http) = {
+      get : "/api/v1/semesters"
+    };
   }
 
   // GetCourses returns a list of courses for the given semester.
   rpc GetCourses(SemesterRef) returns (Courses) {
-    option (google.api.http) = {get: "/api/v1/courses/{semester_ref}"};
+    option (google.api.http) = {
+      get : "/api/v1/courses/{semester_ref}"
+    };
   }
 
   // GetCurrentCourses returns a list of courses for the "current" semester.
   rpc GetCurrentCourses(EmptyMessage) returns (Courses) {
-    option (google.api.http) = {get: "/api/v1/courses"};
+    option (google.api.http) = {
+      get : "/api/v1/courses"
+    };
+  }
+
+  // GetExamResult returns the exam result for the given semester.
+  rpc GetExamResult(SemesterRef) returns (ExamResultRecords) {
+    option (google.api.http) = {
+      get : "/api/v1/exam_result/{semester_ref}"
+    };
+  }
+
+  // GetCurrentExamResult returns the exam result for the "current" semester.
+  rpc GetCurrentExamResult(EmptyMessage) returns (ExamResultRecords) {
+    option (google.api.http) = {
+      get : "/api/v1/exam_result"
+    };
   }
 
   // GetUserProfile returns the user's profile.
   rpc GetUserProfile(EmptyMessage) returns (Profile) {
-    option (google.api.http) = {get: "/api/v1/user_profile"};
+    option (google.api.http) = {
+      get : "/api/v1/user_profile"
+    };
   }
   rpc GetWifiMacInfo(EmptyMessage) returns (WifiMacInfo) {
-    option (google.api.http) = {get: "/api/v1/wifi_mac"};
+    option (google.api.http) = {
+      get : "/api/v1/wifi_mac"
+    };
   }
   rpc RegisterWifiMac(RegisterWifiMacRequest) returns (EmptyMessage) {
     option (google.api.http) = {
-      post: "/api/v1/wifi_mac"
-      body: "*"
+      post : "/api/v1/wifi_mac"
+      body : "*"
     };
   }
   rpc DeregisterWifiMac(DeregisterWifiMacRequest) returns (EmptyMessage) {
-    option (google.api.http) = {delete: "/api/v1/wifi_mac/{address}"};
-  }
-  rpc FillFacultyFeedback(FillFacultyFeedbackRequest) returns (FillFacultyFeedbackResponse) {
     option (google.api.http) = {
-      post: "/api/v1/faculty/feedback/submit",
-      body: "*"
+      delete : "/api/v1/wifi_mac/{address}"
+    };
+  }
+  rpc FillFacultyFeedback(FillFacultyFeedbackRequest)
+      returns (FillFacultyFeedbackResponse) {
+    option (google.api.http) = {
+      post : "/api/v1/faculty/feedback/submit",
+      body : "*"
     };
   }
 }
 
 message EmptyMessage {}
 
-message ClassScheduleRequest {
-  google.type.Date date = 1;
-}
+message ClassScheduleRequest { google.type.Date date = 1; }
 
 message CourseRef {
   string code = 1;
   string name = 2;
 }
 
-// SemesterRef is a reference to a semester. References are used to avoid coupling the semester's name to the semester's ID.
-// References can be retrieved through the GetSemesters RPC.
-message SemesterRef {
-  string semester_ref = 1;
-}
+// SemesterRef is a reference to a semester. References are used to avoid
+// coupling the semester's name to the semester's ID. References can be
+// retrieved through the GetSemesters RPC.
+message SemesterRef { string semester_ref = 1; }
 
-// Attendance messages are embedded in other messages (Course, AttendanceRecord).
+// Attendance messages are embedded in other messages (Course,
+// AttendanceRecord).
 message Attendance {
   int32 attended = 1;
   int32 held = 2;
 }
 
-// Marks is a general message representing a student's marks (internal, external, total, etc). in a course or otherwise.
-// It is embedded in other messages and its meaning is context-dependent.
+// Marks is a general message representing a student's marks (internal,
+// external, total, etc). in a course or otherwise. It is embedded in other
+// messages and its meaning is context-dependent.
 message Marks {
   float have = 1;
   float max = 2;
+}
+
+// ResultRecord represents a course's result (a grade, credit, etc.) in a
+// semester.
+message ExamResultRecord {
+  CourseRef course = 1;
+  Score score = 2;
+  Credits credits = 3;
+  google.type.Date publish_date = 4;
+}
+
+// Score is a general message representing the grade in a result
+message Score {
+  int32 max = 1;
+  string grade = 2;
+  int32 grade_point = 3;
+}
+
+// Credits is a general message representing the credit Information in a result
+message Credits {
+  int32 acquired = 1;
+  int32 effective = 2;
+  int32 points = 3;
+}
+
+// OverallResult message represents the result for a semester (SGPA, CGPA), this
+// is also returned as an array containing the result for every semester
+message OverallResult {
+  SemesterRef semester = 1;
+  float semester_grade_point_average = 2;
+  float cumulative_grade_point_average = 3;
+}
+
+// ExamResultRecords is returned by GetExamResult and GetCurrentExamResult and
+// contains two arrays one for the course wise result and the other for semester
+// wise gpa
+message ExamResultRecords {
+  repeated ExamResultRecord course_wise = 1;
+  repeated OverallResult overall = 2;
 }
 
 // Course represents a course on Amizone.
@@ -147,10 +239,9 @@ message Course {
   string syllabus_doc = 5;
 }
 
-// Courses are a list of courses, usually used to group together courses for a semester.
-message Courses {
-  repeated Course courses = 1;
-}
+// Courses are a list of courses, usually used to group together courses for a
+// semester.
+message Courses { repeated Course courses = 1; }
 
 // AttendanceRecord represents a student's attendance for a course.
 message AttendanceRecord {
@@ -158,11 +249,9 @@ message AttendanceRecord {
   CourseRef course = 2;
 }
 
-// AttendanceRecords is a list of attendance records, usually representing attendance records for all
-// courses in a semester.
-message AttendanceRecords {
-  repeated AttendanceRecord records = 1;
-}
+// AttendanceRecords is a list of attendance records, usually representing
+// attendance records for all courses in a semester.
+message AttendanceRecords { repeated AttendanceRecord records = 1; }
 
 // ScheduledClass represents a scheduled class.
 message ScheduledClass {
@@ -174,10 +263,9 @@ message ScheduledClass {
   AttendanceState attendance = 8;
 }
 
-// ScheduledClasses is a group of scheduled classes, usually used to represent daily class schedules.
-message ScheduledClasses {
-  repeated ScheduledClass classes = 1;
-}
+// ScheduledClasses is a group of scheduled classes, usually used to represent
+// daily class schedules.
+message ScheduledClasses { repeated ScheduledClass classes = 1; }
 
 enum AttendanceState {
   PENDING = 0;
@@ -202,6 +290,7 @@ message ScheduledExam {
   CourseRef course = 1;
   google.protobuf.Timestamp time = 2;
   string mode = 3;
+  optional string location = 4;
 }
 
 message ExaminationSchedule {
@@ -222,17 +311,16 @@ message Profile {
   string uuid = 9;
 }
 
-// Semester models a semester reference on Amizone. We include both a semester "name" / label and a ref
-// to decouple the way they're represented from their form values. These happen to be same at the time of
-// modelling, however, so they might appear duplicitous.
+// Semester models a semester reference on Amizone. We include both a semester
+// "name" / label and a ref to decouple the way they're represented from their
+// form values. These happen to be same at the time of modelling, however, so
+// they might appear duplicitous.
 message Semester {
   string name = 1;
   string ref = 2;
 }
 
-message SemesterList {
-  repeated Semester semesters = 1;
-}
+message SemesterList { repeated Semester semesters = 1; }
 
 message WifiMacInfo {
   repeated string addresses = 1;
@@ -240,9 +328,7 @@ message WifiMacInfo {
   int32 free_slots = 3;
 }
 
-message DeregisterWifiMacRequest {
-  string address = 1;
-}
+message DeregisterWifiMacRequest { string address = 1; }
 
 message RegisterWifiMacRequest {
   string address = 1;
@@ -255,6 +341,4 @@ message FillFacultyFeedbackRequest {
   string comment = 3;
 }
 
-message FillFacultyFeedbackResponse {
-  int32 filled_for = 1;
-}
+message FillFacultyFeedbackResponse { int32 filled_for = 1; }
