@@ -10,11 +10,25 @@ use tokio::sync::Mutex;
 use types::*;
 
 use go_amizone::server::proto::v1::amizone_service_client::AmizoneServiceClient;
+use tonic::transport::{Certificate, Channel, ClientTlsConfig};
 use tonic::Status;
 
 pub async fn new_amizone_connection(addr: impl ToString) -> Result<AmizoneConnection> {
-    if let Ok(connection) = AmizoneServiceClient::connect(addr.to_string()).await {
-        Ok(Arc::new(Mutex::new(connection)))
+    let pem = std::fs::read_to_string("./tls/lets-encrypt.pem")
+        .map_err(|_| Status::internal("Error reading TLS cert"))?;
+
+    let tls_config = ClientTlsConfig::new()
+        .ca_certificate(Certificate::from_pem(pem))
+        .domain_name("amizone.fly.dev");
+
+    if let Ok(ch) = Channel::from_shared(addr.to_string())
+        .map_err(|_| Status::internal("Invalid URL for amizone backend"))?
+        .tls_config(tls_config)
+        .map_err(|_| Status::internal("Invlaid TLS config"))?
+        .connect()
+        .await
+    {
+        Ok(Arc::new(Mutex::new(AmizoneServiceClient::new(ch))))
     } else {
         Err(Status::internal(
             "Couldn't establish connection to amizone API",
