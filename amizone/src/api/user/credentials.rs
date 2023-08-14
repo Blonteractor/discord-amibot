@@ -17,12 +17,12 @@ use rand::RngCore;
 pub type UserMetaData = AsciiMetadataValue;
 
 static PRIVATE_KEY: Lazy<Vec<u8>> = Lazy::new(|| {
+    dotenvy::from_path(std::path::Path::new("./bot/Secrets.toml")).ok();
     STANDARD
-        .decode(std::fs::read_to_string("./PRIVATE_KEY").expect("Failed to read encrytion key"))
-        .expect("Bad encryption key")
-    // STANDARD
-    //     .decode(std::env::var("PRIVATE_ENCRYPTION_KEY").unwrap())
-    //     .unwrap()
+        .decode(
+            std::env::var("PRIVATE_ENCRYPTION_KEY").expect("`PRIVATE_ENCRYPTION_KEY` not found"),
+        )
+        .unwrap()
 });
 
 ///The recommendation to use a 12-byte nonce for AES-GCM encryption comes from

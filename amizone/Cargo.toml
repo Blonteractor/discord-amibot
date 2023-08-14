@@ -17,6 +17,7 @@ futures = "0.3.28"
 once_cell = "1.17.1"
 aes-gcm = "0.10.1"
 rand = "0.8.5"
+dotenvy = "0.15.7"
 
 [dev-dependencies]
 dotenv = "0.15.0"
