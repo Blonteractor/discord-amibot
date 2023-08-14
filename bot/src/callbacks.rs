@@ -26,7 +26,7 @@ pub async fn on_ready<'a>(
     #[cfg(not(debug_assertions))]
     poise::builtins::register_globally(ctx, framework.options().commands.as_slice())
         .await
-        .unwrap();
+        .expect("Failed to register commands globally");
 
     #[cfg(debug_assertions)]
     poise::builtins::register_in_guild(
@@ -37,11 +37,7 @@ pub async fn on_ready<'a>(
             .expect("'DEV_SERVER_ID' not found in dev build")
             .parse::<u64>()
             .expect("Invalid value for 'DEV_SERVER_ID'")
-            .into(), // std::env::var("DEV_SERVER_ID")
-                     //     .unwrap()
-                     //     .parse::<u64>()
-                     //     .unwrap()
-                     //     .into(),
+            .into(),
     )
     .await
     .expect("Error registering commands in dev server");
