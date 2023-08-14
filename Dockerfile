@@ -21,11 +21,6 @@ RUN cargo build --release
 # Stage 2: Create minimal ubuntu image, for running the bot
 FROM ubuntu:latest
 
-# Install necessary dependencies
-RUN apt-get update && apt-get install -y curl
-
-ENV GO_AMIZONE_VERSION 0.8.0
-
 # Expose the port for Discord communication
 EXPOSE 443
 
@@ -38,13 +33,8 @@ COPY .env /app/.env
 COPY --from=builder /app/target/release/bot /app/bot
 RUN chmod 755 /app/bot
 
-# Download go-amizone using curl
-RUN curl -LO https://github.com/ditsuke/go-amizone/releases/download/v$GO_AMIZONE_VERSION/amizone-api-server_linux_amd64 && \ 
-mv amizone-api-server_linux_amd64 /app/amizone-api-server && chmod 755 /app/amizone-api-server
-
 # Create entrypoint script
 COPY <<EOF /app/entrypoint.sh
-/app/amizone-api-server &
 /app/bot
 EOF
 RUN chmod +x /app/entrypoint.sh
