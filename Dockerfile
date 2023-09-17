@@ -1,5 +1,5 @@
 # Stage 1: Build the bot and the server to later shift to a minimal image
-FROM rust:1.69 AS builder
+FROM rust:1.71 AS builder
 RUN apt-get update && apt-get install -y protobuf-compiler
 
 WORKDIR /app
