@@ -34,8 +34,8 @@ You should find a `example.env`, you use it for refrence.
     - DATABASE_URL: The url to your mongodb server, I recommend running one on docker, see docker docs for more info on how to set up mongodb container.
     - AMIZONE_API_URL: The url to the go-amizone backend, set it to https://fly.amizone.dev if you are not sure.
     - DEV_SERVER_ID: The ID of the server you are gonna test the bot on, this is needed so command registration doesnt take long while testing.
-    - DEV_ID: Your discord user ID, right click your profile pic and click `Copy ID`
-    - PRIVATE_KEY: An encryption key that will be used to encrypt and decrypt while fetching credentials from the database
+    - DEV_ID: Your discord user ID, right click your profile pic and click `Copy ID.`
+    - PRIVATE_KEY: An encryption key that will be used to encrypt and decrypt while fetching credentials from the database (should be 16 bytes/128 bits or less).
 
 ### Project structure
 
