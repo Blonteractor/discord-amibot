@@ -23,7 +23,7 @@ This project uses [poise.rs](https://github.com/serenity-rs/poise) as its Discor
     - `AMIZONE_API_URL`
     - `DEV_ID`
     - `DEV_SERVER_ID` (optional if you compile with the --release flag)
-    - `PRIVATE_ENCRYPTION_KEY` (must be 16 bytes/128 bits long)
+    - `PRIVATE_ENCRYPTION_KEY` (AES 256 bit key, _encoded to Base64_)
 6. Run the bot by running `cargo run`.
 
 ## Commands
