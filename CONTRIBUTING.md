@@ -25,10 +25,10 @@ and `git submodule update` to get the dependencies.
 
 ### Even more dependencies
 
-Download the intermidiate certificate from lets encrypt, rename it to
+Download an [intermidiate certificate](https://letsencrypt.org/certificates/#intermediate-certificates) from Let's Encrypt, rename it to
 `lets-encrypt.pem` and keep it in a folder named `tls/` in the root of the
 project. You also need to set up a few envoirement variables in the `.env` file.
-You should find a `example.env`, you use it for refrence.
+You should find a `example.env`, you use it for refrence. 
 
     - DISCORD_TOKEN: Make an app on the discord developer portal, go the OAuth tab, copy the token/client secret, thats your discord token.
     - DATABASE_URL: The url to your mongodb server, I recommend running one on docker, see docker docs for more info on how to set up mongodb container.
