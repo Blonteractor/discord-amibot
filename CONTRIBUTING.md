@@ -37,6 +37,23 @@ You should find a `example.env`, you use it for refrence.
     - DEV_ID: Your discord user ID, right click your profile pic and click `Copy ID.`
     - PRIVATE_KEY: An encryption key that will be used to encrypt and decrypt while fetching credentials from the database (should be an AES 256 bit key encoded to Base64).
 
+**Note:** You may use the following script to generate an encryption key; just paste the output into the `.env` file.
+
+```rust
+use aes_gcm::{aed::OsRng, Aes256Gcm, KeyInit};
+use base64::Engine;
+
+fn main() {
+    let key = Aes256Gcm::generate_key(&mut OsRng);
+
+    let base64_engine = base64::engine::general_purpose::STANDARD;
+
+    let secret_key = base64_engine.encode(key);
+
+    println!("private key: {}", secret_key);
+}
+```
+
 ### Project structure
 
 At this point, your project structure should look a little something like so

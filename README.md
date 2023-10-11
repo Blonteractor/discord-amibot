@@ -27,6 +27,23 @@ This project uses [poise.rs](https://github.com/serenity-rs/poise) as its Discor
     - `PRIVATE_ENCRYPTION_KEY` (AES 256 bit key, _encoded to Base64_)
 7. Run the bot by running `cargo run`.
 
+**Note:** You may use the following script to generate an encryption key; just paste the output into the `.env` file.
+
+```rust
+use aes_gcm::{aed::OsRng, Aes256Gcm, KeyInit};
+use base64::Engine;
+
+fn main() {
+    let key = Aes256Gcm::generate_key(&mut OsRng);
+
+    let base64_engine = base64::engine::general_purpose::STANDARD;
+
+    let secret_key = base64_engine.encode(key);
+
+    println!("private key: {}", secret_key);
+}
+```
+
 ## Commands
 
 > **Note**: Bot is in active developement, all commands might not be stable, see [issues](https://github.com/Blonteractor/discord-amibot/issues)
