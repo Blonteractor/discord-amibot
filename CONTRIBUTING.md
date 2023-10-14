@@ -8,6 +8,10 @@ choose to work on it yourself if you want, but rest assured I will get to it
 when I have the time. If you want any help or have any questions you can reach
 me on discord.
 
+## Creating pull requests
+
+If you are working on an issue or would like to address bugs/add functionality, it is recommended you write your commit messages in the [conventional commit spec](https://www.conventionalcommits.org/en/v1.0.0/) before creating pull requests.
+
 ## Seting up a local developement envoirement
 
 ### Prerequisites
