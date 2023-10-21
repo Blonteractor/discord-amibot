@@ -8,6 +8,10 @@ choose to work on it yourself if you want, but rest assured I will get to it
 when I have the time. If you want any help or have any questions you can reach
 me on discord.
 
+## Creating pull requests
+
+If you are working on an issue or would like to address bugs/add functionality, it is recommended you write your commit messages in the [conventional commit spec](https://www.conventionalcommits.org/en/v1.0.0/) before creating pull requests.
+
 ## Seting up a local developement envoirement
 
 ### Prerequisites
@@ -25,17 +29,34 @@ and `git submodule update` to get the dependencies.
 
 ### Even more dependencies
 
-Download the intermidiate certificate from lets encrypt, rename it to
+Download an [intermidiate certificate](https://letsencrypt.org/certificates/#intermediate-certificates) from Let's Encrypt, rename it to
 `lets-encrypt.pem` and keep it in a folder named `tls/` in the root of the
 project. You also need to set up a few envoirement variables in the `.env` file.
-You should find a `example.env`, you use it for refrence.
+You should find a `example.env`, you use it for refrence. 
 
     - DISCORD_TOKEN: Make an app on the discord developer portal, go the OAuth tab, copy the token/client secret, thats your discord token.
     - DATABASE_URL: The url to your mongodb server, I recommend running one on docker, see docker docs for more info on how to set up mongodb container.
     - AMIZONE_API_URL: The url to the go-amizone backend, set it to https://fly.amizone.dev if you are not sure.
     - DEV_SERVER_ID: The ID of the server you are gonna test the bot on, this is needed so command registration doesnt take long while testing.
-    - DEV_ID: Your discord user ID, right click your profile pic and click `Copy ID`
-    - PRIVATE_KEY: An encryption key that will be used to encrypt and decrypt while fetching credentials from the database
+    - DEV_ID: Your discord user ID, right click your profile pic and click `Copy ID.`
+    - PRIVATE_KEY: An encryption key that will be used to encrypt and decrypt while fetching credentials from the database (should be an AES 256 bit key encoded to Base64).
+
+**Note:** You may use the following script to generate an encryption key; just paste the output into the `.env` file.
+
+```rust
+use aes_gcm::{aed::OsRng, Aes256Gcm, KeyInit};
+use base64::Engine;
+
+fn main() {
+    let key = Aes256Gcm::generate_key(&mut OsRng);
+
+    let base64_engine = base64::engine::general_purpose::STANDARD;
+
+    let secret_key = base64_engine.encode(key);
+
+    println!("private key: {}", secret_key);
+}
+```
 
 ### Project structure
 

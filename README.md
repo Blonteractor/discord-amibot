@@ -17,13 +17,15 @@ This project uses [poise.rs](https://github.com/serenity-rs/poise) as its Discor
 2. Install Rust and its package manager, Cargo, if you haven't already.
 3. Install the required dependencies by running `cargo build`.
 4. Create a Discord bot and obtain its token.
-5. Create a `.env` file in the root directory of the project and set the following environment variables:
+5. Install an [intermediate certificate](https://letsencrypt.org/certificates/#intermediate-certificates) from Let's Encrypt, rename it to 'lets-encrypt.pem' and put it in a folder named 'tls/' in the root of the project.
+6. Create a `.env` file in the root directory of the project and set the following environment variables:
     - `DISCORD_TOKEN`
     - `DATABASE_URL`
     - `AMIZONE_API_URL`
     - `DEV_ID`
     - `DEV_SERVER_ID` (optional if you compile with the --release flag)
-6. Run the bot by running `cargo run`.
+    - `PRIVATE_ENCRYPTION_KEY` (AES 256 bit key, _encoded to Base64_)
+7. Run the bot by running `cargo run`.
 
 ## Commands
 
@@ -42,6 +44,8 @@ This project uses [poise.rs](https://github.com/serenity-rs/poise) as its Discor
 ## Contributing
 
 Contributions are welcome! If you find a bug or have a feature request, please open an issue. If you'd like to contribute code, please fork the repository and create a pull request.
+
+[Contribution Guide](./CONTRIBUTING.md)
 
 ## License
 
