@@ -1,6 +1,6 @@
 use super::error::BotError;
 use super::{Connections, Context, Data, Result, IGNORE_CHECK};
-use log::{debug, info, trace};
+use log::{debug, info, trace, error};
 use std::collections::HashMap;
 use std::env;
 use std::str::FromStr;
@@ -69,7 +69,7 @@ pub async fn on_ready<'a>(
 }
 
 pub async fn on_error(error: poise::FrameworkError<'_, crate::Data, BotError>) {
-    info!("Encountered error => {}", error);
+    error!("Encountered error => {}", error);
 
     // Error during a command
     match error {
