@@ -85,7 +85,7 @@ pub async fn schedule(
         year: match year {
             Some(year) => match year.parse() {
                 Ok(year) => {
-                    if year > 2100 && year < 2000 {
+                    if !(2000..2100).contains(&year) {
                         ctx.say("Invalid year.").await?;
                         return Ok(());
                     } else {

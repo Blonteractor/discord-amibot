@@ -21,7 +21,7 @@ After submitting the form, it will indicate the success of filling out the facul
 pub async fn facultyfeedback(ctx: ApplicationContext<'_>) -> CommandResult {
     let default_feedback = FeedbackForm {
         query: String::from("5"),
-        query_rating: String::from("5"),
+        query_rating: String::from("3"),
         comments: String::from("Nice."),
     };
 
@@ -48,14 +48,26 @@ pub async fn facultyfeedback(ctx: ApplicationContext<'_>) -> CommandResult {
         }
     };
 
+    if !(1..=5).contains(&query) {
+        ctx.say("Invalid query, expected a number from 1 to 5.")
+            .await?;
+        return Ok(());
+    }
+
     let query_rating = match feedback.query_rating.parse::<i32>() {
         Ok(query_rating) => query_rating,
         Err(_) => {
-            ctx.say("Invalid query, expected a number from 1 to 5.")
+            ctx.say("Invalid query rating, expected a number from 1 to 3.")
                 .await?;
             return Ok(());
         }
     };
+
+    if !(1..=3).contains(&query_rating) {
+        ctx.say("Invalid query rating, expected a number from 1 to 3.")
+            .await?;
+        return Ok(());
+    }
 
     let msg = ctx.say("*Filling faculty feedback...*").await?;
 
