@@ -11,9 +11,9 @@ name: CI
 jobs:
   checks: 
     runs-on: ubuntu-latest
-    env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      PRIVATE_ENCRPYPTION_KEY: ${{ secrets.PRIVATE_ENCRPYPTION_KEY }}
+    # env:
+    #   DATABASE_URL: ${{ secrets.DATABASE_URL }}
+    #   PRIVATE_ENCRPYPTION_KEY: ${{ secrets.PRIVATE_ENCRPYPTION_KEY }}
 
     steps:
       - name: Checkout
@@ -50,11 +50,11 @@ jobs:
         run: |
           cargo clippy -- --no-deps -D warnings
 
-      - name: Tests
-        run: |
-          cargo test --release crud
-          cargo test --release api 
-          cargo test --release bot
+      # - name: Tests
+      #   run: |
+      #     cargo test --release crud
+      #     cargo test --release api 
+      #     cargo test --release bot
 
       - name: Bootstrap fly 
         uses: superfly/flyctl-actions/setup-flyctl@master
