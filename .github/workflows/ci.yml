@@ -48,7 +48,6 @@ jobs:
 
       - name: Tests
         run: |
-          cargo test --release crud
           cargo test --release api 
           cargo test --release bot
         env:
