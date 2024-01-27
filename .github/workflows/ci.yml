@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Bootstrap
+      - name: Bootstrap rust
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
@@ -25,13 +25,13 @@ jobs:
 
       - name: Update rust 
         run: |
-          rustup Update
+          rustup update
         continue-on-error: true
 
       - name: Add target
         run: |
           rustup target add x86_64-unknown-linux-gnu
-          continue-on-error: true
+        continue-on-error: true
 
       - name: Formatting
         run: |
