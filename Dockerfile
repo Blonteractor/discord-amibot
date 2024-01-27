@@ -1,5 +1,5 @@
 # Stage 1: Build the bot and the server to later shift to a minimal image
-FROM rust:1.71 AS builder
+FROM rust:1.75 AS builder
 RUN apt-get update && apt-get install -y protobuf-compiler
 
 WORKDIR /app
@@ -11,9 +11,7 @@ COPY Cargo.toml Cargo.toml
 COPY Cargo.lock Cargo.lock
 
 # Clone the protobuf dependencies
-RUN <<EOF
- [ "$(ls -A ./amizone/proto/googleapis)" ] && echo "Found protobuf deps" || git clone https://www.github.com/googleapis/googleapis.git ./amizone/proto/googleapis
-EOF
+RUN rm -rf ./amizone/proto/googleapis && git clone https://www.github.com/googleapis/googleapis.git ./amizone/proto/googleapis
 
 # Build the Bot
 RUN cargo build --release
@@ -33,11 +31,4 @@ COPY .env /app/.env
 COPY --from=builder /app/target/release/bot /app/bot
 RUN chmod 755 /app/bot
 
-# Create entrypoint script
-COPY <<EOF /app/entrypoint.sh
-/app/bot
-EOF
-RUN chmod +x /app/entrypoint.sh
-
-
-CMD ["/bin/sh", "/app/entrypoint.sh"]
+CMD ["/app/bot"]
