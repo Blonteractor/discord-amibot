@@ -1,6 +1,6 @@
 use super::error::BotError;
 use super::{Connections, Context, Data, Result, IGNORE_CHECK};
-use log::{debug, info, trace, error};
+use log::{debug, error, info, trace};
 use std::collections::HashMap;
 use std::env;
 use std::str::FromStr;
@@ -44,7 +44,7 @@ pub async fn on_ready<'a>(
     trace!("Setting up connections");
     let connections = Connections {
         amizone: amizoneapi::new_amizone_connection(
-            env::var("AMIZONE_API_URL").expect("missing AMIZONE_API_URL"),
+            env::var("AMIZONE_API_URL").unwrap_or("https://amizone.fly.dev".to_string()),
         )
         .await
         .expect("`AMIZONE_API_URL` not found"),
