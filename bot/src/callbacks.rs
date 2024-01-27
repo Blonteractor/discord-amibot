@@ -47,7 +47,7 @@ pub async fn on_ready<'a>(
             env::var("AMIZONE_API_URL").unwrap_or("https://amizone.fly.dev".to_string()),
         )
         .await
-        .expect("`AMIZONE_API_URL` not found"),
+        .expect("Failed to initialize connection to go-amizone."),
         db: amizoneapi::new_db_connection(
             env::var("DATABASE_URL").expect("missing `DATABASE_URL`"),
         )
