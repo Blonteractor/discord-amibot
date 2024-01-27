@@ -23,7 +23,6 @@ pub async fn datesheet(ctx: Context<'_>) -> CommandResult {
     let (title, datesheet) = client.get_exam_schedule().await?;
 
     if !datesheet.is_empty() {
-       
         let mut message = format!("**{}**```", title);
         // let mut message = String::new;
 
