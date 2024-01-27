@@ -23,6 +23,9 @@ jobs:
           target: x86_64-unknown-linux-gnu
         continue-on-error: true
 
+      - name: Bootstrap protoc
+        uses: arduino/setup-protoc@v2
+
       - name: Update rust 
         run: |
           rustup update
