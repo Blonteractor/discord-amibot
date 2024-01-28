@@ -84,7 +84,7 @@ async fn main() {
             ..Default::default()
         })
         .token(env::var("DISCORD_TOKEN").expect("missing DISCORD_TOKEN"))
-        .intents(serenity::GatewayIntents::all())
+        .intents(serenity::GatewayIntents::non_privileged())
         .setup(|ctx, ready, framework| Box::pin(callbacks::on_ready(ctx, ready, framework)));
 
     framework.run().await.expect("Failed to run framework");
