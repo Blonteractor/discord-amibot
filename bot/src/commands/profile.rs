@@ -11,7 +11,7 @@ The information is presented in an embedded format with different fields.";
 /// Retrieve and display your user profile information.
 #[poise::command(prefix_command, slash_command, help_text_fn = "profile_help")]
 pub async fn profile(ctx: Context<'_>) -> CommandResult {
-    ctx.defer().await?;
+    ctx.defer_ephemeral().await?;
     let mut invocation_data = ctx.invocation_data::<Result<UserClient>>().await.unwrap();
 
     let client = invocation_data.as_mut()?;

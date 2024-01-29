@@ -24,7 +24,7 @@ pub async fn courses(
     ctx: Context<'_>,
     #[description = "Semester number"] semester: Option<usize>,
 ) -> CommandResult {
-    ctx.defer().await?;
+    ctx.defer_ephemeral().await?;
     let mut invocation_data = ctx.invocation_data::<Result<UserClient>>().await.unwrap();
 
     let client = invocation_data.as_mut()?;

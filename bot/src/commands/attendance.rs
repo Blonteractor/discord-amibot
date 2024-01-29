@@ -13,7 +13,7 @@ Note: This command requires you to be logged in using the /login command. If you
 ///  Retrieves your attendance records for the current semester.
 #[poise::command(prefix_command, slash_command, help_text_fn = "attendance_help")]
 pub async fn attendance(ctx: Context<'_>) -> CommandResult {
-    ctx.defer().await?;
+    ctx.defer_ephemeral().await?;
     let mut invocation_data = ctx.invocation_data::<Result<UserClient>>().await.unwrap();
 
     let client = invocation_data.as_mut()?;
