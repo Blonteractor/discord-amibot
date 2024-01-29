@@ -25,8 +25,8 @@ EXPOSE 443
 
 WORKDIR /app
 
-# Copy the .env file from the build context into the Docker image
-COPY .env /app/.env
+# Copy the .env file from the build context into the Docker image, the wildcard is used to copy optionally, only if it exists
+COPY .en* /app/.env
 
 RUN mkdir tls && curl https://letsencrypt.org/certs/lets-encrypt-r3.pem -o tls/lets-encrypt.pem
 
