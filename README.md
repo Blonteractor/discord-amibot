@@ -1,6 +1,6 @@
 # Amibot
 
-[![Discord](https://img.shields.io/static/v1?logo=Discord&logoColor=fff&labelColor=5562ea&label=Amibot%20Early%20Access&message=⬅️%20Click%20to%20use%20&color=50524f)](https://discord.gg/T9ZDVTw4mQ)
+[![Discord](https://img.shields.io/static/v1?logo=Discord&logoColor=fff&labelColor=5562ea&label=Amibot%20Early%20Access&message=⬅️%20Click%20to%20use%20&color=50524f)](https://discord.com/api/oauth2/authorize?client_id=1098463516664537129&permissions=0&scope=bot)
 
 ![Rust](https://img.shields.io/badge/Rust-%23000000.svg?style=flat&logo=rust&logoColor=white)
 ![MongoDB Logo](https://img.shields.io/badge/-MongoDB-47A248?logo=MongoDB&logoColor=fff)
@@ -8,8 +8,11 @@
 [![Issues](https://img.shields.io/github/issues/blonteractor/discord-amibot?logo=github)](https://github.com/blonteractor/discord-amibot/issues)
 [![License](https://img.shields.io/github/license/Blonteractor/discord-amibot)](./LICENSE)
 
-This is a Discord bot that allows users to access their student portal directly in Discord. The bot is written in Rust and uses [go-amizone](https://github.com/ditsuke/go-amizone) as its backend.
-This project uses [poise.rs](https://github.com/serenity-rs/poise) as its Discord bot framework.
+This is a Discord bot that allows users to access their student portal directly
+in Discord. The bot is written in Rust and uses
+[go-amizone](https://github.com/ditsuke/go-amizone) as its backend. This project
+uses [poise.rs](https://github.com/serenity-rs/poise) as its Discord bot
+framework.
 
 ## Getting Started
 
@@ -17,19 +20,24 @@ This project uses [poise.rs](https://github.com/serenity-rs/poise) as its Discor
 2. Install Rust and its package manager, Cargo, if you haven't already.
 3. Install the required dependencies by running `cargo build`.
 4. Create a Discord bot and obtain its token.
-5. Install an [intermediate certificate](https://letsencrypt.org/certificates/#intermediate-certificates) from Let's Encrypt, rename it to 'lets-encrypt.pem' and put it in a folder named 'tls/' in the root of the project.
-6. Create a `.env` file in the root directory of the project and set the following environment variables:
-    - `DISCORD_TOKEN`
-    - `DATABASE_URL`
-    - `AMIZONE_API_URL`
-    - `DEV_ID`
-    - `DEV_SERVER_ID` (optional if you compile with the --release flag)
-    - `PRIVATE_ENCRYPTION_KEY` (AES 256 bit key, _encoded to Base64_)
+5. Install an
+   [intermediate certificate](https://letsencrypt.org/certificates/#intermediate-certificates)
+   from Let's Encrypt, rename it to 'lets-encrypt.pem' and put it in a folder
+   named 'tls/' in the root of the project.
+6. Create a `.env` file in the root directory of the project and set the
+   following environment variables:
+   - `DISCORD_TOKEN`
+   - `DATABASE_URL`
+   - `AMIZONE_API_URL`
+   - `DEV_ID`
+   - `DEV_SERVER_ID` (optional if you compile with the --release flag)
+   - `PRIVATE_ENCRYPTION_KEY` (AES 256 bit key, _encoded to Base64_)
 7. Run the bot by running `cargo run`.
 
 ## Commands
 
-> **Note**: Bot is in active developement, all commands might not be stable, see [issues](https://github.com/Blonteractor/discord-amibot/issues)
+> **Note**: Bot is in active developement, all commands might not be stable, see
+> [issues](https://github.com/Blonteractor/discord-amibot/issues)
 
 - `/attendance`: Displays the user's attendance for the current semester.
 - `/schedule <YYYY-MM-DD>`: Displays the user's schedule for the given date.
@@ -43,7 +51,9 @@ This project uses [poise.rs](https://github.com/serenity-rs/poise) as its Discor
 
 ## Contributing
 
-Contributions are welcome! If you find a bug or have a feature request, please open an issue. If you'd like to contribute code, please fork the repository and create a pull request.
+Contributions are welcome! If you find a bug or have a feature request, please
+open an issue. If you'd like to contribute code, please fork the repository and
+create a pull request.
 
 [Contribution Guide](./CONTRIBUTING.md)
 
