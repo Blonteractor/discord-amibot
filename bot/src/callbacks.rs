@@ -75,7 +75,7 @@ pub async fn on_error(error: poise::FrameworkError<'_, crate::Data, BotError>) {
     match error {
         FrameworkError::Command { error, ctx } => error.handle(ctx).await,
         FrameworkError::CommandPanic { payload, ctx } => {
-            debug!(
+            error!(
                 "Command Panic: {}",
                 payload.unwrap_or("Payload missing".to_string())
             );
@@ -95,14 +95,14 @@ pub async fn on_error(error: poise::FrameworkError<'_, crate::Data, BotError>) {
             trigger: _,
         } => {
             msg.reply(ctx, "Unkown command").await.ok();
-            debug!("Unkown command: {}", msg_content);
+            error!("Unkown command: {}", msg_content);
         }
         FrameworkError::UnknownInteraction {
             ctx: _,
             framework: _,
             interaction,
         } => {
-            debug!("Unkown interaction: {:?}", interaction);
+            error!("Unkown interaction: {:?}", interaction);
         }
         _ => (),
     }
